@@ -1,22 +1,31 @@
-using Managers;
 using UnityEngine;
+using Managers;
 
 namespace Player
 {
+    public enum PlayerYState
+    {
+        Ascending,
+        Descending,
+        Grounded
+    }
+
     public class PlayerMovement : MonoBehaviour
     {
-        [Header("Dependencies")]
-        [SerializeField] private CharacterController controller;
-        [SerializeField] private PlayerInput playerInput;
+        [field: Header("Dependencies")]
+        [field: SerializeField] public CharacterController controller { get; private set; }
+        [field: SerializeField] public PlayerInput input { get; private set; }
 
-        [Header("General Movement")]
-        [SerializeField] private float walkSpeed = 7f;
+        [field: Header("General Movement")]
+        [field: SerializeField] public float walkSpeed { get; private set; } = 7f;
+        [field: SerializeField] public float gravity { get; private set; } = -30f;
+
+        public PlayerYState playerYState { get; private set; }
 
         private Vector3 inputVector;
         private Vector3 smoothedVector;
         private Vector3 planerImpulseVector;
 
-        private const float GRAVITY = -30f;
         private const float ACCELERATION = 10f;
         private const float DECELERATION = 9f;
         private const float AIR_RECOVERY_MOD = 1f;
@@ -40,6 +49,8 @@ namespace Player
         {
             desiredSpeed = walkSpeed;
             currentSpeed = walkSpeed;
+            yVelocity = GROUNDED_Y_VELOCITY;
+            playerYState = PlayerYState.Grounded;
             speedLerpModifier = DEFAULT_LERP_MODIFIER;
             speedBoostLerpModifier = DEFAULT_LERP_MODIFIER;
             groundConstraintTime = DEFAULT_GROUND_CONSTRAINT_TIME;
@@ -53,7 +64,7 @@ namespace Player
 
             InitializeController();
 
-            inputVector = (transform.forward * playerInput.moveY + transform.right * playerInput.moveX).normalized;
+            inputVector = (transform.forward * input.moveY + transform.right * input.moveX).normalized;
 
             ApplyGravity();
             SmoothMovement();
@@ -91,6 +102,19 @@ namespace Player
                         Time.deltaTime * controller.velocity.magnitude * AIR_RECOVERY_MOD * 0.5f + 0.01f);
                 }
             }
+
+            if (controller.isGrounded && yVelocity == GROUNDED_Y_VELOCITY)
+            {
+                playerYState = PlayerYState.Grounded;
+            }
+            else if (yVelocity > 0f)
+            {
+                playerYState = PlayerYState.Ascending;
+            }
+            else
+            {
+                playerYState = PlayerYState.Descending;
+            }
         }
         private void ApplyGravity()
         {
@@ -100,7 +124,7 @@ namespace Player
                 return;
             }
 
-            yVelocity = !controller.isGrounded ? yVelocity += GRAVITY * Time.deltaTime : yVelocity = GROUNDED_Y_VELOCITY;
+            yVelocity = playerYState != PlayerYState.Grounded ? yVelocity += gravity * Time.deltaTime : yVelocity = GROUNDED_Y_VELOCITY;
         }
         private void SmoothMovement()
         {
@@ -136,6 +160,12 @@ namespace Player
         }
         #endregion
 
+        private void OnDrawGizmosSelected()
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position + Vector3.up * (controller.height - controller.radius + 0.01f), controller.radius);
+        }
+
         #region Public Functions
         public void AddImpulseVector(Vector3 forceVector, bool overrideVelocity = false)
         {
@@ -157,14 +187,6 @@ namespace Player
         {
             groundConstraintTime = time;
             groundConstraintTimer = 0f;
-        }
-        public float GetBaseControllerGravity()
-        {
-            return GRAVITY;
-        }
-        public bool IsGrounded()
-        {
-            return controller.isGrounded;
         }
         #endregion
     }
