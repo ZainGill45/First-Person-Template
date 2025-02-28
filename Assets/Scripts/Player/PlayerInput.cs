@@ -36,10 +36,10 @@ namespace Player
                 return;
             }
 
-            moveX = Input.GetAxis("Horizontal");
-            mouseX = Input.GetAxis("Mouse X");
-            moveY = Input.GetAxis("Vertical");
-            mouseY = Input.GetAxis("Mouse Y");
+            moveX = Input.GetAxisRaw("Horizontal");
+            mouseX = Input.GetAxisRaw("Mouse X");
+            moveY = Input.GetAxisRaw("Vertical");
+            mouseY = Input.GetAxisRaw("Mouse Y");
 
             jumpDown = Input.GetKeyDown(jumpKey);
             sprintHold = Input.GetKey(sprintKey);

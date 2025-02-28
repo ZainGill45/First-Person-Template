@@ -348,7 +348,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -410,6 +410,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01d91fd71976eca4a975d50a7266224f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  characterController: {fileID: 2094119771}
+  playerInput: {fileID: 2094119772}
+  playerCamera: {fileID: 330585545}
+  defaultFOV: 103
+  sensitivity: 0.2856
+  verticalClamp: 90
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -845,7 +851,7 @@ CharacterController:
   m_Radius: 0.5
   m_SlopeLimit: 45
   m_StepOffset: 0.3
-  m_SkinWidth: 0.08
+  m_SkinWidth: 0.001
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1.125, z: 0}
 --- !u!114 &2094119772
@@ -860,6 +866,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdcce8f1213d3d643bb72b1fcf353294, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  jumpKey: 32
+  sprintKey: 304
 --- !u!114 &2094119773
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -896,6 +904,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cf2eae91283b72438ab779262cb50df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  controller: {fileID: 2094119771}
+  playerInput: {fileID: 2094119772}
+  walkSpeed: 7
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
