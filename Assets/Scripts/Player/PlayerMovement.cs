@@ -24,12 +24,15 @@ namespace Player
         private const float GROUNDED_Y_VELOCITY = -0.1f;
         private const float GROUNDED_RECOVERY_MOD = 5f;
         private const float DEFAULT_LERP_MODIFIER = 5f;
+        private const float DEFAULT_GROUND_CONSTRAINT_TIME = 0.1f;
 
         private float yVelocity;
         private float speedBoost;
         private float desiredSpeed;
         private float currentSpeed;
         private float speedLerpModifier;
+        private float groundConstraintTime;
+        private float groundConstraintTimer;
         private float speedBoostLerpModifier;
 
         private void Start()
@@ -38,6 +41,8 @@ namespace Player
             currentSpeed = walkSpeed;
             speedLerpModifier = DEFAULT_LERP_MODIFIER;
             speedBoostLerpModifier = DEFAULT_LERP_MODIFIER;
+            groundConstraintTime = DEFAULT_GROUND_CONSTRAINT_TIME;
+            groundConstraintTimer = DEFAULT_GROUND_CONSTRAINT_TIME;
         }
 
         private void Update()
@@ -50,7 +55,7 @@ namespace Player
             SmoothMovement();
             InterpolateParameters();
 
-            controller.Move(smoothedVector * currentSpeed * Time.deltaTime + Vector3.up * yVelocity + planerImpulseVector);
+            controller.Move((smoothedVector * currentSpeed + Vector3.up * yVelocity + planerImpulseVector) * Time.deltaTime);
         }
 
         #region Private Functions
@@ -85,11 +90,13 @@ namespace Player
         }
         private void ApplyGravity()
         {
-            if (controller.isGrounded)
-                yVelocity = GROUNDED_Y_VELOCITY;
+            if (groundConstraintTimer <= groundConstraintTime)
+            {
+                groundConstraintTimer += Time.deltaTime;
+                return;
+            }
 
-            if (!controller.isGrounded)
-                yVelocity += GRAVITY * Time.deltaTime;
+            yVelocity = !controller.isGrounded ? yVelocity += GRAVITY * Time.deltaTime : yVelocity = GROUNDED_Y_VELOCITY;
         }
         private void SmoothMovement()
         {
@@ -122,6 +129,38 @@ namespace Player
             currentSpeed = Mathf.Lerp(currentSpeed, desiredSpeed, Time.deltaTime * speedLerpModifier);
 
             currentSpeed += speedBoost;
+        }
+        #endregion
+
+        #region Public Functions
+        public void AddImpulseVector(Vector3 forceVector, bool overrideVelocity = false)
+        {
+            if (overrideVelocity)
+            {
+                planerImpulseVector = new Vector3(0f, planerImpulseVector.y, 0f);
+                yVelocity = 0f;
+            }
+
+            planerImpulseVector += Vector3.right * forceVector.x + Vector3.forward * forceVector.z;
+            yVelocity += forceVector.y;
+        }
+        public void GiveSpeedBoost(float boostAmount, float lerpModifier = DEFAULT_LERP_MODIFIER)
+        {
+            speedBoost = boostAmount;
+            speedBoostLerpModifier = lerpModifier;
+        }
+        public void PauseGroundConstraints(float time = DEFAULT_GROUND_CONSTRAINT_TIME)
+        {
+            groundConstraintTime = time;
+            groundConstraintTimer = 0f;
+        }
+        public float GetBaseControllerGravity()
+        {
+            return GRAVITY;
+        }
+        public bool IsGrounded()
+        {
+            return controller.isGrounded;
         }
         #endregion
     }
