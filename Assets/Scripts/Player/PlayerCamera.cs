@@ -10,9 +10,10 @@ namespace Player
         [SerializeField] private Camera playerCamera;
 
         [Header("General Settings")]
-        [field: SerializeField] private float defaultFOV = 103f;
-        [field: SerializeField] private float sensitivity = 0.2856f;
-        [field: SerializeField] private float verticalClamp = 90f;
+        [SerializeField, Range(0f, 90f)] private float maxVerticalClamp = 90f;
+        [SerializeField, Range(0f, -90f)] private float minVerticalClamp = -90f;
+        [SerializeField, Range(60f, 130f)] private float defaultFOV = 103f;
+        [SerializeField, Range(0.01f, 1f)] private float sensitivity = 0.2856f;
 
         private const float CONTROLLER_HEAD_OFFSET = 0.25f;
         private const float DEFAULT_ASPECT_RATIO = 16f / 9f;
@@ -35,7 +36,7 @@ namespace Player
             angleX += playerInput.mouseX * sensitivity;
             angleY -= playerInput.mouseY * sensitivity;
 
-            angleY = Mathf.Clamp(angleY, -verticalClamp, verticalClamp);
+            angleY = Mathf.Clamp(angleY, minVerticalClamp, maxVerticalClamp);
 
             playerCamera.transform.localEulerAngles = new Vector3(angleY, angleX, 0f);
             characterController.transform.localEulerAngles = new Vector3(0f, angleX, 0f);
