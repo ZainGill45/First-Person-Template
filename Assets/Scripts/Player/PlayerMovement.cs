@@ -1,3 +1,4 @@
+using Managers;
 using UnityEngine;
 
 namespace Player
@@ -47,6 +48,9 @@ namespace Player
 
         private void Update()
         {
+            if (PauseManager.instance.gamePaused)
+                return;
+
             InitializeController();
 
             inputVector = (transform.forward * playerInput.moveY + transform.right * playerInput.moveX).normalized;

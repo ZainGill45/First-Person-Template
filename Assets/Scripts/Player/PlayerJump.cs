@@ -1,3 +1,4 @@
+using Managers;
 using UnityEngine;
 
 namespace Player
@@ -20,6 +21,9 @@ namespace Player
 
         private void Update()
         {
+            if (PauseManager.instance.gamePaused)
+                return;
+
             if (playerInput.jumpDown && playerMovement.IsGrounded())
             {
                 playerMovement.PauseGroundConstraints();

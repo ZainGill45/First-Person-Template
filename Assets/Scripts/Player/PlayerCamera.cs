@@ -1,3 +1,4 @@
+using Managers;
 using UnityEngine;
 
 namespace Player
@@ -24,15 +25,15 @@ namespace Player
 
         private void Start()
         {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-
             verticalDefaultFOV = Camera.HorizontalToVerticalFieldOfView(defaultFOV, DEFAULT_ASPECT_RATIO);
             playerCamera.fieldOfView = verticalDefaultFOV;
         }
 
         private void Update()
         {
+            if (PauseManager.instance.gamePaused)
+                return;
+
             angleX += playerInput.mouseX * sensitivity;
             angleY -= playerInput.mouseY * sensitivity;
 
