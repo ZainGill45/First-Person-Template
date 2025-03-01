@@ -1,4 +1,4 @@
-# Unity First-Person Project Template
+# Unity First Person Project Template
 
 ## Overview
 This is a first-person player controller template for Unity, designed for smooth movement, camera handling, and input management. It includes features such as jumping, sprinting, and pausing the game. The template is structured to be modular and easily extendable.
