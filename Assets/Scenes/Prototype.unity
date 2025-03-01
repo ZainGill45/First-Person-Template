@@ -1576,6 +1576,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44d949da2729e224da12f4019a0a7ed6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerMovement: {fileID: 2094119775}
+  sprintModifier: 2
+  sprintEnterModifier: 2
+  sprintExitModifier: 3
 --- !u!114 &2094119775
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -13,7 +13,6 @@ namespace Player
     public class PlayerMovement : MonoBehaviour
     {
         #region Variables
-        #region Editor Exposed Variables
         [field: Header("Dependencies")]
         [field: SerializeField] public CharacterController controller { get; private set; }
         [field: SerializeField] public PlayerInput input { get; private set; }
@@ -21,7 +20,6 @@ namespace Player
         [field: Header("General Movement")]
         [field: SerializeField] public float walkSpeed { get; private set; } = 7f;
         [field: SerializeField] public float gravity { get; private set; } = -30f;
-        #endregion
 
         public PlayerYState playerYState { get; private set; }
 
@@ -202,6 +200,11 @@ namespace Player
         {
             speedBoost = boostAmount;
             speedBoostLerpModifier = lerpModifier;
+        }
+        public void SetDesiredSpeed(float speedTarget, float lerpModifier = DEFAULT_LERP_MODIFIER)
+        {
+            desiredSpeed = speedTarget;
+            speedLerpModifier = lerpModifier;
         }
         public void PauseGroundConstraints(float time = DEFAULT_GROUND_CONSTRAINT_TIME)
         {
