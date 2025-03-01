@@ -1,23 +1,22 @@
 using UnityEngine;
-using Managers;
 
-namespace Player
+namespace Managers
 {
-    public class PlayerInput : MonoBehaviour
+    public class InputManager : MonoBehaviour
     {
         [Header("Key Mappings")]
         [SerializeField] private KeyCode pauseKey = KeyCode.Escape;
         [SerializeField] private KeyCode jumpKey = KeyCode.Space;
         [SerializeField] private KeyCode sprintKey = KeyCode.LeftShift;
 
-        public float moveX { get; private set; }
-        public float mouseX { get; private set; }
-        public float moveY { get; private set; }
-        public float mouseY { get; private set; }
+        public static float moveX { get; private set; }
+        public static float mouseX { get; private set; }
+        public static float moveY { get; private set; }
+        public static float mouseY { get; private set; }
 
-        public bool pauseDown { get; private set; }
-        public bool jumpDown { get; private set; }
-        public bool sprintHold { get; private set; }
+        public static bool pauseDown { get; private set; }
+        public static bool jumpDown { get; private set; }
+        public static bool sprintHold { get; private set; }
 
         private void OnEnable()
         {

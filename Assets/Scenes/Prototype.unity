@@ -338,7 +338,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 330585546}
-  - component: {fileID: 330585548}
   - component: {fileID: 330585545}
   - component: {fileID: 330585544}
   - component: {fileID: 330585547}
@@ -467,25 +466,6 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
---- !u!114 &330585548
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 330585543}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01d91fd71976eca4a975d50a7266224f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  characterController: {fileID: 2094119771}
-  playerInput: {fileID: 2094119772}
-  playerCamera: {fileID: 330585545}
-  maxVerticalClamp: 90
-  minVerticalClamp: -90
-  defaultFOV: 103
-  sensitivity: 0.2856
 --- !u!1 &373997913
 GameObject:
   m_ObjectHideFlags: 0
@@ -537,7 +517,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.6862745}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.88235295}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -699,7 +679,7 @@ Light:
   serializedVersion: 11
   m_Type: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 1.5
+  m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -1012,8 +992,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 330585546}
   - {fileID: 2094119770}
+  - {fileID: 330585546}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1423719830
@@ -1075,8 +1055,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Game Paused
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 82c9eea048c824e458fc5b924a82f0d2, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 82c9eea048c824e458fc5b924a82f0d2, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1110,7 +1090,7 @@ MonoBehaviour:
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
-  m_characterSpacing: 0
+  m_characterSpacing: 4
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -1195,6 +1175,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1606622370}
   - component: {fileID: 1606622371}
+  - component: {fileID: 1606622372}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -1230,7 +1211,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseMenu: {fileID: 1707736396}
-  playerInput: {fileID: 2094119772}
+--- !u!114 &1606622372
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1606622369}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 901cdf35758d25948be015856b318fc9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pauseKey: 27
+  jumpKey: 32
+  sprintKey: 304
 --- !u!1 &1707736396
 GameObject:
   m_ObjectHideFlags: 0
@@ -1484,10 +1479,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2094119770}
   - component: {fileID: 2094119771}
-  - component: {fileID: 2094119772}
   - component: {fileID: 2094119775}
-  - component: {fileID: 2094119773}
-  - component: {fileID: 2094119774}
   m_Layer: 3
   m_Name: Controller
   m_TagString: Untagged
@@ -1529,57 +1521,12 @@ CharacterController:
   m_Enabled: 1
   serializedVersion: 3
   m_Height: 2.25
-  m_Radius: 0.5
+  m_Radius: 0.45
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.0001
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1.125, z: 0}
---- !u!114 &2094119772
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2094119769}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fdcce8f1213d3d643bb72b1fcf353294, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  pauseKey: 27
-  jumpKey: 32
-  sprintKey: 304
---- !u!114 &2094119773
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2094119769}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a0e833695b6552342a3c69b25583a6d6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 2094119775}
-  jumpHeight: 1
---- !u!114 &2094119774
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2094119769}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 44d949da2729e224da12f4019a0a7ed6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerMovement: {fileID: 2094119775}
-  sprintModifier: 2
-  sprintEnterModifier: 2
-  sprintExitModifier: 3
 --- !u!114 &2094119775
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1592,9 +1539,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cf2eae91283b72438ab779262cb50df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <playerCamera>k__BackingField: {fileID: 330585545}
   <controller>k__BackingField: {fileID: 2094119771}
-  <input>k__BackingField: {fileID: 2094119772}
+  <headOffset>k__BackingField: 0.25
+  <maxVerticalClamp>k__BackingField: 90
+  <minVerticalClamp>k__BackingField: -90
+  <defaultFOV>k__BackingField: 103
+  <sensitivity>k__BackingField: 0.2856
   <walkSpeed>k__BackingField: 7
+  <jumpHeight>k__BackingField: 1
+  <acceleration>k__BackingField: 10
+  <deceleration>k__BackingField: 9
+  <airAcceleration>k__BackingField: 5
+  <airDeceleration>k__BackingField: 0.2
+  <sprintModifier>k__BackingField: 2
+  <sprintEnterModifier>k__BackingField: 2
+  <sprintExitModifier>k__BackingField: 3
+  <defaultLerpModifier>k__BackingField: 5
+  <camPositionalSmoothing>k__BackingField: 64
   <gravity>k__BackingField: -30
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

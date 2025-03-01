@@ -1,5 +1,4 @@
 using UnityEngine;
-using Player;
 using System;
 
 namespace Managers
@@ -8,7 +7,6 @@ namespace Managers
     {
         [Header("Dependencies")]
         [SerializeField] private GameObject pauseMenu;
-        [SerializeField] private PlayerInput playerInput;
 
         public static PauseManager instance { get; private set; }
 
@@ -35,7 +33,7 @@ namespace Managers
 
         private void Update()
         {
-            if (playerInput.pauseDown)
+            if (InputManager.pauseDown)
             {
                 gamePaused = !gamePaused;
 
