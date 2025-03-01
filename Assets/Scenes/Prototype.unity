@@ -1554,26 +1554,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cf2eae91283b72438ab779262cb50df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <playerCamera>k__BackingField: {fileID: 330585545}
-  <controller>k__BackingField: {fileID: 2094119771}
-  <headOffset>k__BackingField: 0.25
-  <maxVerticalClamp>k__BackingField: 90
-  <minVerticalClamp>k__BackingField: -90
-  <defaultFOV>k__BackingField: 103
-  <sensitivity>k__BackingField: 0.2856
-  <walkSpeed>k__BackingField: 7
-  <jumpHeight>k__BackingField: 1
-  <acceleration>k__BackingField: 10
-  <deceleration>k__BackingField: 9
-  <airAcceleration>k__BackingField: 5
-  <airDeceleration>k__BackingField: 0.2
-  <sprintFOV>k__BackingField: 106
-  <sprintModifier>k__BackingField: 2
-  <sprintEnterModifier>k__BackingField: 2
-  <sprintExitModifier>k__BackingField: 3
-  <defaultLerpModifier>k__BackingField: 5
-  <camPositionalSmoothing>k__BackingField: 64
-  <gravity>k__BackingField: -30
+  playerCamera: {fileID: 330585545}
+  controller: {fileID: 2094119771}
+  headOffset: 0.25
+  maxVerticalClamp: 90
+  minVerticalClamp: -90
+  defaultFOV: 103
+  sensitivity: 0.2
+  walkSpeed: 7
+  jumpHeight: 1
+  acceleration: 10
+  deceleration: 9
+  airAcceleration: 5
+  airDeceleration: 0.2
+  sprintFOV: 106
+  sprintModifier: 2
+  sprintEnterModifier: 2
+  sprintExitModifier: 3
+  defaultLerpModifier: 5
+  camPositionalSmoothing: 64
+  gravity: -30
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

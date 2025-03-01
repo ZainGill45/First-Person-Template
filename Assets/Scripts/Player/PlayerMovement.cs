@@ -15,38 +15,36 @@ namespace Player
     {
         #region Variables
         [field: Header("Dependencies")]
-        [field: SerializeField] public Camera playerCamera { get; private set; }
-        [field: SerializeField] public CharacterController controller { get; private set; }
+        [field: SerializeField] private Camera playerCamera;
+        [field: SerializeField] private CharacterController controller;
 
         [field: Header("Camera Settings")]
-        [field: SerializeField, Range(0f, 1f)] public float headOffset { get; private set; } = 0.25f;
-        [field: SerializeField, Range(0f, 90f)] public float maxVerticalClamp { get; private set; } = 90f;
-        [field: SerializeField, Range(0f, -90f)] public float minVerticalClamp { get; private set; } = -90f;
-        [field: SerializeField, Range(60f, 130f)] public float defaultFOV { get; private set; } = 103f;
-        [field: SerializeField, Range(0.01f, 1f)] public float sensitivity { get; private set; } = 0.2856f;
+        [field: SerializeField, Range(0f, 1f)] private float headOffset = 0.25f;
+        [field: SerializeField, Range(0f, 90f)] private float maxVerticalClamp = 90f;
+        [field: SerializeField, Range(0f, -90f)] private float minVerticalClamp = -90f;
+        [field: SerializeField, Range(60f, 130f)] private float defaultFOV = 103f;
+        [field: SerializeField, Range(0.01f, 1f)] private float sensitivity = 0.2f;
 
         [field: Header("Movement Settings")]
-        [field: SerializeField] public float walkSpeed { get; private set; } = 7f;
-        [field: SerializeField] public float jumpHeight { get; private set; } = 1f;
-        [field: SerializeField] public float acceleration { get; private set; } = 10f;
-        [field: SerializeField] public float deceleration { get; private set; } = 9f;
-        [field: SerializeField] public float airAcceleration { get; private set; } = 5f;
-        [field: SerializeField] public float airDeceleration { get; private set; } = 0.2f;
+        [field: SerializeField] private float walkSpeed = 7f;
+        [field: SerializeField] private float jumpHeight = 1f;
+        [field: SerializeField] private float acceleration = 10f;
+        [field: SerializeField] private float deceleration = 9f;
+        [field: SerializeField] private float airAcceleration = 5f;
+        [field: SerializeField] private float airDeceleration = 0.2f;
 
         [field: Header("Sprint Settings")]
-        [field: SerializeField, Range(60f, 130f)] public float sprintFOV { get; private set; } = 106f;
-        [field: SerializeField] public float sprintModifier { get; private set; } = 2f;
-        [field: SerializeField] public float sprintEnterModifier{ get; private set; } = 2f;
-        [field: SerializeField] public float sprintExitModifier{ get; private set; } = 3f;
+        [field: SerializeField, Range(60f, 130f)] private float sprintFOV = 106f;
+        [field: SerializeField] private float sprintModifier = 2f;
+        [field: SerializeField] private float sprintEnterModifier = 2f;
+        [field: SerializeField] private float sprintExitModifier = 3f;
 
         [field: Header("Miscellaneous Settings")]
-        [field: SerializeField] public float defaultLerpModifier { get; private set; } = 5f;
-        [field: SerializeField] public float camPositionalSmoothing { get; private set; } = 64f;
-        [field: SerializeField] public float gravity { get; private set; } = -30f;
+        [field: SerializeField] private float defaultLerpModifier = 5f;
+        [field: SerializeField] private float camPositionalSmoothing = 64f;
+        [field: SerializeField] private float gravity = -30f;
 
-        public PlayerYState playerYState { get; private set; }
-
-        public bool sprinting { get; private set; }
+        private PlayerYState playerYState;
 
         private Vector3 inputVector;
         private Vector3 smoothedVector;
@@ -72,6 +70,8 @@ namespace Player
         private float groundConstraintTime;
         private float groundConstraintTimer;
         private float speedBoostLerpModifier;
+
+        private bool sprinting;
         #endregion
 
         #region Initilization
