@@ -1,4 +1,5 @@
 using UnityEngine;
+using DG.Tweening;
 using System;
 
 namespace Managers
@@ -6,7 +7,11 @@ namespace Managers
     public class PauseManager : MonoBehaviour
     {
         [Header("Dependencies")]
-        [SerializeField] private GameObject pauseMenu;
+        [SerializeField] private CanvasGroup pauseMenu;
+
+        [Header("General Settings")]
+        [SerializeField] private Ease fadeEase = Ease.OutCubic;
+        [SerializeField] private float fadeDuration = 0.3f;
 
         public static PauseManager instance { get; private set; }
 
@@ -54,8 +59,9 @@ namespace Managers
             Cursor.visible = true;
 
             gamePaused = true;
-            pauseMenu.SetActive(true);
             Time.timeScale = 0f;
+
+            pauseMenu.DOFade(1f, fadeDuration).SetEase(fadeEase).SetUpdate(true);
 
             OnGamePaused?.Invoke();
         }
@@ -66,8 +72,9 @@ namespace Managers
             Cursor.visible = false;
 
             gamePaused = false;
-            pauseMenu.SetActive(false);
             Time.timeScale = 1f;
+
+            pauseMenu.DOFade(0f, fadeDuration).SetEase(fadeEase).SetUpdate(true);
 
             OnGamePlayed?.Invoke();
         }
