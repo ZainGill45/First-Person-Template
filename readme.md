@@ -1,0 +1,2 @@
+# Usage Information
+To use this unity project template Git and Git LFS need to be installed. Clone or download the project and **Before you open the project** run the `git lfs install` command at the project root. After you have run the command open the project in unity and it will initialize and all the necessary packages on initialization. 
