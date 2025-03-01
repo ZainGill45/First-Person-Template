@@ -1,5 +1,6 @@
-using Managers;
 using UnityEngine;
+using Utilities;
+using Managers;
 
 namespace Player
 {
@@ -16,6 +17,7 @@ namespace Player
         [SerializeField, Range(60f, 130f)] private float defaultFOV = 103f;
         [SerializeField, Range(0.01f, 1f)] private float sensitivity = 0.2856f;
 
+        private const float CAMERA_POSITIONAL_SMOOTHING = 64f;
         private const float CONTROLLER_HEAD_OFFSET = 0.25f;
         private const float DEFAULT_ASPECT_RATIO = 16f / 9f;
 
@@ -42,7 +44,15 @@ namespace Player
             playerCamera.transform.localEulerAngles = new Vector3(angleY, angleX, 0f);
             characterController.transform.localEulerAngles = new Vector3(0f, angleX, 0f);
 
-            playerCamera.transform.position = characterController.transform.position + Vector3.up * (characterController.height - CONTROLLER_HEAD_OFFSET);
+            if (ZUtils.Approx(playerCamera.transform.position, characterController.transform.position + Vector3.up * (characterController.height - CONTROLLER_HEAD_OFFSET), ZUtils.SMALL_THRESHOLD))
+            {
+                playerCamera.transform.position = characterController.transform.position + Vector3.up * (characterController.height - CONTROLLER_HEAD_OFFSET);
+                return;
+            }
+
+            playerCamera.transform.position = Vector3.Lerp(playerCamera.transform.position, 
+                                                           characterController.transform.position + Vector3.up * (characterController.height - CONTROLLER_HEAD_OFFSET), 
+                                                           Time.deltaTime * CAMERA_POSITIONAL_SMOOTHING);
         }
     }
 }
