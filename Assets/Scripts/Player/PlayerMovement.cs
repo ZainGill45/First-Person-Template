@@ -96,9 +96,6 @@ namespace Player
         #region MonoBehaviour Functions
         private void Update()
         {
-            if (PauseManager.instance.gamePaused)
-                return;
-
             InitializeController();
             RotateController();
 

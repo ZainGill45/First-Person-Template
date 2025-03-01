@@ -59,8 +59,8 @@ namespace Managers
             Cursor.visible = true;
 
             gamePaused = true;
-            Time.timeScale = 0f;
 
+            DOTween.To(() => Time.timeScale, x => Time.timeScale = x, 0f, fadeDuration).SetEase(fadeEase).SetUpdate(true);
             pauseMenu.DOFade(1f, fadeDuration).SetEase(fadeEase).SetUpdate(true);
 
             OnGamePaused?.Invoke();
@@ -72,8 +72,8 @@ namespace Managers
             Cursor.visible = false;
 
             gamePaused = false;
-            Time.timeScale = 1f;
 
+            DOTween.To(() => Time.timeScale, x => Time.timeScale = x, 1f, fadeDuration).SetEase(fadeEase).SetUpdate(true);
             pauseMenu.DOFade(0f, fadeDuration).SetEase(fadeEase).SetUpdate(true);
 
             OnGamePlayed?.Invoke();
