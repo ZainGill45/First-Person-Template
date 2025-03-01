@@ -34,6 +34,7 @@ namespace Player
         [field: SerializeField] public float airDeceleration { get; private set; } = 0.2f;
 
         [field: Header("Sprint Settings")]
+        [field: SerializeField, Range(60f, 130f)] public float sprintFOV { get; private set; } = 106f;
         [field: SerializeField] public float sprintModifier { get; private set; } = 2f;
         [field: SerializeField] public float sprintEnterModifier{ get; private set; } = 2f;
         [field: SerializeField] public float sprintExitModifier{ get; private set; } = 3f;
@@ -61,10 +62,13 @@ namespace Player
         private float jumpForce;
         private float yVelocity;
         private float speedBoost;
+        private float desiredFOV;
         private float desiredSpeed;
         private float currentSpeed;
+        private float fovLerpModifier;
         private float speedLerpModifier;
-        private float verticalDefaultFOV;
+        private float sprintVerticalFOV;
+        private float defaultVerticalFOV;
         private float groundConstraintTime;
         private float groundConstraintTimer;
         private float speedBoostLerpModifier;
@@ -78,15 +82,19 @@ namespace Player
         }
         private void Start()
         {
-            verticalDefaultFOV = Camera.HorizontalToVerticalFieldOfView(defaultFOV, ZUtils.DEFAULT_AR);
+            defaultVerticalFOV = Camera.HorizontalToVerticalFieldOfView(defaultFOV, ZUtils.DEFAULT_AR);
+            sprintVerticalFOV = Camera.HorizontalToVerticalFieldOfView(sprintFOV, ZUtils.DEFAULT_AR);
+
             jumpForce = Mathf.Sqrt(jumpHeight * -2f * gravity);
 
             desiredSpeed = walkSpeed;
             currentSpeed = walkSpeed;
             yVelocity = GROUNDED_Y_VELOCITY;
+            desiredFOV = defaultVerticalFOV;
             playerYState = PlayerYState.Grounded;
+            fovLerpModifier = defaultLerpModifier;
             speedLerpModifier = defaultLerpModifier;
-            playerCamera.fieldOfView = verticalDefaultFOV;
+            playerCamera.fieldOfView = defaultVerticalFOV;
             speedBoostLerpModifier = defaultLerpModifier;
             groundConstraintTime = DEFAULT_GROUND_CONSTRAINT_TIME;
             groundConstraintTimer = DEFAULT_GROUND_CONSTRAINT_TIME;
@@ -211,12 +219,18 @@ namespace Player
                 desiredSpeed = walkSpeed * sprintModifier;
                 speedLerpModifier = sprintEnterModifier;
 
+                desiredFOV = sprintVerticalFOV;
+                fovLerpModifier = sprintEnterModifier;
+
                 sprinting = true;
             }
             else if (!InputManager.sprintHold && sprinting)
             {
                 desiredSpeed = walkSpeed;
                 speedLerpModifier = sprintExitModifier;
+
+                desiredFOV = defaultVerticalFOV;
+                fovLerpModifier = sprintExitModifier;
 
                 sprinting = false;
             }
@@ -248,6 +262,8 @@ namespace Player
         }
         private void InterpolateParameters()
         {
+            playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, desiredFOV, Time.deltaTime * fovLerpModifier);
+
             speedBoost = Mathf.Lerp(speedBoost, 0f, Time.deltaTime * speedBoostLerpModifier);
             currentSpeed = Mathf.Lerp(currentSpeed, desiredSpeed, Time.deltaTime * speedLerpModifier);
 
