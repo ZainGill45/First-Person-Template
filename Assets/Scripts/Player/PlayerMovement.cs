@@ -1,15 +1,10 @@
 using UnityEngine;
 using Utilities;
 using Managers;
+using System;
 
 namespace Player
 {
-    public enum PlayerYState
-    {
-        Ascending,
-        Descending,
-        Grounded
-    }
 
     public class PlayerMovement : MonoBehaviour
     {
@@ -44,16 +39,13 @@ namespace Player
         [field: SerializeField] private float camPositionalSmoothing = 64f;
         [field: SerializeField] private float gravity = -30f;
 
-        private PlayerYState playerYState;
-
         private Vector3 inputVector;
         private Vector3 smoothedVector;
         private Vector3 planerImpulseVector;
 
         private const float AIR_RECOVERY_MOD = 1f;
         private const float GROUNDED_RECOVERY_MOD = 5f;
-        private const float GROUNDED_Y_VELOCITY = -0.05f;
-        private const float DEFAULT_GROUND_CONSTRAINT_TIME = 0.1f;
+        private const float TRULY_GROUNDED_THRESHOLD = 0.01f;
 
         private float angleX;
         private float angleY;
@@ -63,15 +55,16 @@ namespace Player
         private float desiredFOV;
         private float desiredSpeed;
         private float currentSpeed;
+        private float groundedTime;
         private float fovLerpModifier;
         private float speedLerpModifier;
         private float sprintVerticalFOV;
         private float defaultVerticalFOV;
-        private float groundConstraintTime;
-        private float groundConstraintTimer;
         private float speedBoostLerpModifier;
 
+        private bool grounded;
         private bool sprinting;
+        private bool ceilingHit;
         #endregion
 
         #region Initilization
@@ -89,19 +82,14 @@ namespace Player
 
             desiredSpeed = walkSpeed;
             currentSpeed = walkSpeed;
-            yVelocity = GROUNDED_Y_VELOCITY;
             desiredFOV = defaultVerticalFOV;
-            playerYState = PlayerYState.Grounded;
             fovLerpModifier = defaultLerpModifier;
             speedLerpModifier = defaultLerpModifier;
             playerCamera.fieldOfView = defaultVerticalFOV;
             speedBoostLerpModifier = defaultLerpModifier;
-            groundConstraintTime = DEFAULT_GROUND_CONSTRAINT_TIME;
-            groundConstraintTimer = DEFAULT_GROUND_CONSTRAINT_TIME;
         }
         #endregion
 
-        #region MonoBehaviour Functions
         private void Update()
         {
             InitializeController();
@@ -109,26 +97,31 @@ namespace Player
 
             inputVector = (transform.forward * InputManager.moveY + transform.right * InputManager.moveX).normalized;
 
-            ApplyGravity();
             EvaluateJumping();
             EvaluateSprinting();
-            SmoothMovement();
-            InterpolateParameters();
 
             controller.Move((smoothedVector * currentSpeed + Vector3.up * yVelocity + planerImpulseVector) * Time.deltaTime);
         }
 
-        private void OnDrawGizmosSelected()
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(transform.position + Vector3.up * (controller.height - controller.radius + 0.01f), controller.radius);
-        }
-        #endregion
-
         #region Private Functions
         private void InitializeController()
         {
-            if (controller.isGrounded)
+            #region Determine Grounded State
+            groundedTime = controller.isGrounded ? groundedTime + Time.deltaTime : 0f;
+
+            if (groundedTime >= TRULY_GROUNDED_THRESHOLD)
+            {
+                ceilingHit = false;
+                grounded = true;
+            }
+            else
+            {
+                grounded = false;
+            }
+            #endregion
+
+            #region Reset Planer Impulse Vector
+            if (grounded)
             {
                 if (inputVector.magnitude > 0f)
                 {
@@ -154,17 +147,54 @@ namespace Player
                         Time.deltaTime * controller.velocity.magnitude * AIR_RECOVERY_MOD * 0.5f + 0.01f);
                 }
             }
+            #endregion
 
-            if (controller.isGrounded)
+            #region Smooth Controller Movement
+            if (grounded)
             {
-                playerYState = PlayerYState.Grounded;
-            } else if (yVelocity > GROUNDED_Y_VELOCITY)
-            {
-                playerYState = PlayerYState.Ascending;
-            } else if (yVelocity < -Mathf.Abs(GROUNDED_Y_VELOCITY))
-            {
-                playerYState = PlayerYState.Descending;
+                if (inputVector.magnitude > 0f)
+                {
+                    smoothedVector = Vector3.Lerp(smoothedVector, inputVector, Time.deltaTime * acceleration);
+                }
+                else
+                {
+                    smoothedVector = Vector3.Lerp(smoothedVector, inputVector, Time.deltaTime * deceleration);
+                }
             }
+            else
+            {
+                if (inputVector.magnitude > 0f)
+                {
+                    smoothedVector = Vector3.Lerp(smoothedVector, inputVector, Time.deltaTime * airAcceleration);
+                }
+                else
+                {
+                    smoothedVector = Vector3.Lerp(smoothedVector, inputVector, Time.deltaTime * airDeceleration);
+                }
+            }
+            #endregion
+
+            #region Check Head Collision
+            if ((controller.collisionFlags & CollisionFlags.Above) != 0 && !ceilingHit)
+            {
+                ceilingHit = true;
+                yVelocity = 0f;
+            }
+            #endregion
+
+            #region Apply Gravity
+            if (!grounded)
+                yVelocity += gravity * Time.deltaTime;
+            #endregion
+
+            #region Interpolate Parameters
+            playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, desiredFOV, Time.deltaTime * fovLerpModifier);
+
+            speedBoost = Mathf.Lerp(speedBoost, 0f, Time.deltaTime * speedBoostLerpModifier);
+            currentSpeed = Mathf.Lerp(currentSpeed, desiredSpeed, Time.deltaTime * speedLerpModifier);
+
+            currentSpeed += speedBoost;
+            #endregion
         }
         private void RotateController()
         {
@@ -186,31 +216,10 @@ namespace Player
                                                            controller.transform.position + Vector3.up * (controller.height - headOffset),
                                                            Time.deltaTime * camPositionalSmoothing);
         }
-        private void ApplyGravity()
-        {
-            if (playerYState == PlayerYState.Ascending && 
-                Physics.CheckSphere(transform.position + Vector3.up * (controller.height - controller.radius + 0.01f), controller.radius, LayerMask.NameToLayer("Player")))
-            {
-                    yVelocity = 0f;
-            }
-
-            if (groundConstraintTimer <= groundConstraintTime)
-            {
-                groundConstraintTimer += Time.deltaTime;
-                return;
-            }
-
-            yVelocity = playerYState != PlayerYState.Grounded ? yVelocity += gravity * Time.deltaTime : yVelocity = GROUNDED_Y_VELOCITY;
-        }
         private void EvaluateJumping()
         {
-            if (InputManager.jumpDown && playerYState == PlayerYState.Grounded)
-            {
+            if (InputManager.jumpDown && grounded)
                 AddImpulseVector(Vector3.up * jumpForce, true);
-
-                groundConstraintTime = 0.1f;
-                groundConstraintTimer = 0f;
-            }
         }
         private void EvaluateSprinting()
         {
@@ -234,40 +243,6 @@ namespace Player
 
                 sprinting = false;
             }
-        }
-        private void SmoothMovement()
-        {
-            if (controller.isGrounded)
-            {
-                if (inputVector.magnitude > 0f)
-                {
-                    smoothedVector = Vector3.Lerp(smoothedVector, inputVector, Time.deltaTime * acceleration);
-                }
-                else
-                {
-                    smoothedVector = Vector3.Lerp(smoothedVector, inputVector, Time.deltaTime * deceleration);
-                }
-            }
-            else
-            {
-                if (inputVector.magnitude > 0f)
-                {
-                    smoothedVector = Vector3.Lerp(smoothedVector, inputVector, Time.deltaTime * airAcceleration);
-                }
-                else
-                {
-                    smoothedVector = Vector3.Lerp(smoothedVector, inputVector, Time.deltaTime * airDeceleration);
-                }
-            }
-        }
-        private void InterpolateParameters()
-        {
-            playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, desiredFOV, Time.deltaTime * fovLerpModifier);
-
-            speedBoost = Mathf.Lerp(speedBoost, 0f, Time.deltaTime * speedBoostLerpModifier);
-            currentSpeed = Mathf.Lerp(currentSpeed, desiredSpeed, Time.deltaTime * speedLerpModifier);
-
-            currentSpeed += speedBoost;
         }
         #endregion
 
