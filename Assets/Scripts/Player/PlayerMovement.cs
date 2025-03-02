@@ -111,6 +111,8 @@ namespace Player
 
             if (groundedTime >= TRULY_GROUNDED_THRESHOLD)
             {
+                yVelocity = -0.1f;
+
                 ceilingHit = false;
                 grounded = true;
             }
