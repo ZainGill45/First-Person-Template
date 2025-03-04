@@ -64,11 +64,6 @@ namespace Player
         #endregion
 
         #region Initilization
-        private void Awake()
-        {
-            if (LayerMask.NameToLayer("Player") == -1)
-                Debug.LogError("Player layer not found in LayerMask. Please create a layer named \"Player\" and assign it to the Player GameObject.");
-        }
         private void Start()
         {
             defaultVerticalFOV = Camera.HorizontalToVerticalFieldOfView(defaultFOV, ZUtils.DEFAULT_AR);
