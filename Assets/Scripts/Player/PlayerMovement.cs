@@ -10,7 +10,7 @@ namespace Player
         #region Variables
         [field: Header("Dependencies")]
         [field: SerializeField] private Camera playerCamera;
-        [field: SerializeField] private CharacterController controller;
+        [field: SerializeField] private CollisionSolver controller;
 
         [field: Header("Camera Settings")]
         [field: SerializeField, Range(0f, 1f)] private float headOffset = 0.25f;
