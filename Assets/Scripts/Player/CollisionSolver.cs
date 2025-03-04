@@ -32,6 +32,7 @@ namespace Player
         public bool isGrounded { get; private set; }
 
         private CapsuleCollider capsuleCollider;
+        private Collider[] groundCollisions;
         private Bounds capsuleBounds;
 
         private Vector3 updatedPosition;
@@ -67,15 +68,15 @@ namespace Player
             transform.position = oldPosition + finalMovement;
             velocity = finalMovement;
 
-            if (Physics.CheckSphere(transform.position + Vector3.up * radius, radius, ~ignoredLayers))
+            groundCollisions = Physics.OverlapSphere(transform.position + Vector3.up * (radius - (skinWidth + 0.01f)), radius);
+
+            foreach (Collider collider in groundCollisions)
             {
-                isGrounded = true;
-                collisionFlags |= CollisionFlags.Below;
-            }
-            else
-            {
-                isGrounded = false;
-                collisionFlags &= ~CollisionFlags.Below;
+                if (collider.gameObject != gameObject)
+                {
+                    isGrounded = true;
+                    collisionFlags |= CollisionFlags.Below;
+                }
             }
 
             updatedPosition = transform.position;
@@ -96,12 +97,10 @@ namespace Player
 
             float distance = velocity.magnitude + skinWidth;
 
-            // Compute the capsule endpoints based on current position.
-            Vector3 bottomPoint = transform.position + capsuleCollider.center - Vector3.up * ((height * 0.5f) - radius);
-            Vector3 topPoint = transform.position + capsuleCollider.center + Vector3.up * ((height * 0.5f) - radius);
+            Vector3 bottomPoint = startPosition + capsuleCollider.center - Vector3.up * ((height * 0.5f) - radius);
+            Vector3 topPoint = startPosition + capsuleCollider.center + Vector3.up * ((height * 0.5f) - radius);
 
             RaycastHit collisionHit;
-            // Note the use of ~ignoredLayers so that default (0) means all layers are hit.
             if (Physics.CapsuleCast(bottomPoint, topPoint, capsuleCollider.radius, velocity.normalized, out collisionHit, distance, ~ignoredLayers))
             {
                 Vector3 snapToSurface = velocity.normalized * (collisionHit.distance - skinWidth);
@@ -123,14 +122,14 @@ namespace Player
                     float planerScale = 1 - Vector3.Dot(
                         new Vector3(collisionHit.normal.x, 0, collisionHit.normal.z).normalized,
                         -new Vector3(initialDirection.x, 0, initialDirection.z).normalized
-                        );
+                    );
 
                     if (isGrounded && !gravityPass)
                     {
                         leftover = ProjectAndScale(
                             new Vector3(leftover.x, 0, leftover.z),
                             new Vector3(collisionHit.normal.x, 0, collisionHit.normal.z)
-                            ).normalized;
+                        ).normalized;
                         leftover *= planerScale;
                     }
                     else
@@ -150,7 +149,7 @@ namespace Player
             ResizeCollider();
 
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(transform.position + Vector3.up * radius, radius);
+            Gizmos.DrawWireSphere(transform.position + Vector3.up * (radius - (skinWidth + 0.01f)), radius);
         }
 
         private void ResizeCollider()
