@@ -5,7 +5,6 @@ using System;
 
 namespace Player
 {
-
     public class PlayerMovement : MonoBehaviour
     {
         #region Variables
