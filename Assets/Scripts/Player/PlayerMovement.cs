@@ -45,7 +45,6 @@ namespace Player
 
         private const float AIR_RECOVERY_MOD = 1f;
         private const float GROUNDED_RECOVERY_MOD = 5f;
-        private const float TRULY_GROUNDED_THRESHOLD = 0.01f;
 
         private float angleX;
         private float angleY;
@@ -55,14 +54,12 @@ namespace Player
         private float desiredFOV;
         private float desiredSpeed;
         private float currentSpeed;
-        private float groundedTime;
         private float fovLerpModifier;
         private float speedLerpModifier;
         private float sprintVerticalFOV;
         private float defaultVerticalFOV;
         private float speedBoostLerpModifier;
 
-        private bool grounded;
         private bool sprinting;
         private bool ceilingHit;
         #endregion
@@ -106,24 +103,8 @@ namespace Player
         #region Private Functions
         private void InitializeController()
         {
-            #region Determine Grounded State
-            groundedTime = controller.isGrounded ? groundedTime + Time.deltaTime : 0f;
-
-            if (groundedTime >= TRULY_GROUNDED_THRESHOLD)
-            {
-                yVelocity = -0.1f;
-
-                ceilingHit = false;
-                grounded = true;
-            }
-            else
-            {
-                grounded = false;
-            }
-            #endregion
-
             #region Reset Planer Impulse Vector
-            if (grounded)
+            if (controller.isGrounded)
             {
                 if (inputVector.magnitude > 0f)
                 {
@@ -152,7 +133,7 @@ namespace Player
             #endregion
 
             #region Smooth Controller Movement
-            if (grounded)
+            if (controller.isGrounded)
             {
                 if (inputVector.magnitude > 0f)
                 {
@@ -185,7 +166,10 @@ namespace Player
             #endregion
 
             #region Apply Gravity
-            if (!grounded)
+            if (controller.isGrounded)
+                yVelocity = -0.1f;
+
+            if (!controller.isGrounded)
                 yVelocity += gravity * Time.deltaTime;
             #endregion
 
@@ -220,7 +204,7 @@ namespace Player
         }
         private void EvaluateJumping()
         {
-            if (InputManager.jumpDown && grounded)
+            if (InputManager.jumpDown && controller.isGrounded)
                 AddImpulseVector(Vector3.up * jumpForce, true);
         }
         private void EvaluateSprinting()
