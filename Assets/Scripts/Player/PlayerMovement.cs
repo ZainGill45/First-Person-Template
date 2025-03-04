@@ -161,7 +161,7 @@ namespace Player
 
             #region Apply Gravity
             if (controller.isGrounded)
-                yVelocity = -0.1f;
+                yVelocity = 0f;
 
             if (!controller.isGrounded)
                 yVelocity += gravity * Time.deltaTime;

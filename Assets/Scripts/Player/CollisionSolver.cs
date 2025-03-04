@@ -40,7 +40,6 @@ namespace Player
         private void Awake()
         {
             capsuleCollider = GetComponent<CapsuleCollider>();
-            capsuleBounds = capsuleCollider.bounds;
         }
         private void Start()
         {
@@ -62,32 +61,16 @@ namespace Player
 
             Vector3 horizontalMovement = Collide(horizontalInput, oldPosition, 0, false, horizontalInput);
             Vector3 interimPosition = oldPosition + horizontalMovement;
-
             Vector3 verticalMovement = Collide(verticalInput, interimPosition, 0, true, verticalInput);
-
             Vector3 finalMovement = horizontalMovement + verticalMovement;
 
             transform.position = oldPosition + finalMovement;
-
             velocity = finalMovement;
 
-            Vector3 bottom = transform.position;
-            float extraHeight = 0.05f;
-            float checkDistance = 0.1f;
-
-            if (Physics.Raycast(bottom + Vector3.up * extraHeight, Vector3.down, out RaycastHit hit, checkDistance + extraHeight, ~ignoredLayers))
+            if (Physics.CheckSphere(transform.position + Vector3.up * radius, radius, ~ignoredLayers))
             {
-                float slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
-                if (slopeAngle <= maxSlope)
-                {
-                    isGrounded = true;
-                    collisionFlags |= CollisionFlags.Below;
-                }
-                else
-                {
-                    isGrounded = false;
-                    collisionFlags &= ~CollisionFlags.Below;
-                }
+                isGrounded = true;
+                collisionFlags |= CollisionFlags.Below;
             }
             else
             {
@@ -98,7 +81,6 @@ namespace Player
             updatedPosition = transform.position;
         }
 
-
         private Vector3 Collide(Vector3 velocity, Vector3 startPosition, int depth, bool gravityPass, Vector3 initialDirection)
         {
             Vector3 ProjectAndScale(Vector3 vector, Vector3 normal)
@@ -106,7 +88,6 @@ namespace Player
                 float magnitude = vector.magnitude;
                 vector = Vector3.ProjectOnPlane(vector, normal).normalized;
                 vector *= magnitude;
-
                 return vector;
             }
 
@@ -115,13 +96,16 @@ namespace Player
 
             float distance = velocity.magnitude + skinWidth;
 
-            RaycastHit collisionHit;
+            // Compute the capsule endpoints based on current position.
+            Vector3 bottomPoint = transform.position + capsuleCollider.center - Vector3.up * ((height * 0.5f) - radius);
+            Vector3 topPoint = transform.position + capsuleCollider.center + Vector3.up * ((height * 0.5f) - radius);
 
-            if (Physics.CapsuleCast(startPosition, capsuleBounds.extents, capsuleCollider.radius, velocity.normalized, out collisionHit, distance, ignoredLayers))
+            RaycastHit collisionHit;
+            // Note the use of ~ignoredLayers so that default (0) means all layers are hit.
+            if (Physics.CapsuleCast(bottomPoint, topPoint, capsuleCollider.radius, velocity.normalized, out collisionHit, distance, ~ignoredLayers))
             {
                 Vector3 snapToSurface = velocity.normalized * (collisionHit.distance - skinWidth);
                 Vector3 leftover = velocity - snapToSurface;
-
                 float angle = Vector3.Angle(collisionHit.normal, Vector3.up);
 
                 if (snapToSurface.magnitude <= skinWidth)
@@ -133,7 +117,8 @@ namespace Player
                         return snapToSurface;
 
                     leftover = ProjectAndScale(leftover, collisionHit.normal);
-                } else
+                }
+                else
                 {
                     float planerScale = 1 - Vector3.Dot(
                         new Vector3(collisionHit.normal.x, 0, collisionHit.normal.z).normalized,
@@ -146,9 +131,9 @@ namespace Player
                             new Vector3(leftover.x, 0, leftover.z),
                             new Vector3(collisionHit.normal.x, 0, collisionHit.normal.z)
                             ).normalized;
-
                         leftover *= planerScale;
-                    } else
+                    }
+                    else
                     {
                         leftover = ProjectAndScale(leftover, collisionHit.normal) * planerScale;
                     }
@@ -163,6 +148,9 @@ namespace Player
         private void OnDrawGizmosSelected()
         {
             ResizeCollider();
+
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position + Vector3.up * radius, radius);
         }
 
         private void ResizeCollider()
@@ -172,9 +160,9 @@ namespace Player
 
             capsuleCollider.height = height;
             capsuleCollider.radius = radius;
-
             capsuleCollider.center = new Vector3(0f, height * 0.5f, 0f);
 
+            capsuleBounds = capsuleCollider.bounds;
             capsuleBounds.Expand(-2 * skinWidth);
         }
     }
