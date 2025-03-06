@@ -147,28 +147,6 @@ namespace Player
                 return snapToSurface + Collide(leftover, startPosition + snapToSurface, depth + 1, gravityPass, initialDirection);
             }
 
-            if (!gravityPass && isGrounded && velocity.y == 0)
-            {
-                RaycastHit groundHit;
-                float groundCheckDistance = radius * 2;
-
-                if (Physics.Raycast(startPosition + Vector3.up * (radius * 0.5f), Vector3.down, out groundHit, groundCheckDistance + skinWidth, ~ignoredLayers))
-                {
-                    float groundAngle = Vector3.Angle(groundHit.normal, Vector3.up);
-
-                    if (groundAngle <= maxSlope)
-                    {
-                        float distanceToGround = groundHit.distance - (radius * 0.5f) - skinWidth;
-
-                        if (distanceToGround > skinWidth && distanceToGround < radius)
-                        {
-                            Vector3 snapVector = Vector3.down * distanceToGround;
-                            return velocity + snapVector;
-                        }
-                    }
-                }
-            }
-
             return velocity;
         }
 
