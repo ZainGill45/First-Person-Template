@@ -88,7 +88,6 @@ namespace Player
 
         private Vector3 Collide(Vector3 velocity, Vector3 startPosition, int depth, bool gravityPass, Vector3 initialDirection)
         {
-            // Exit condition for recursion
             if (depth > maxRecursionDepth)
                 return Vector3.zero;
 
@@ -102,28 +101,23 @@ namespace Player
             RaycastHit collisionHit;
             if (Physics.CapsuleCast(bottomPoint, topPoint, capsuleCollider.radius, direction, out collisionHit, distance, ~ignoredLayers))
             {
-                // Calculate how far we can move before hitting
                 Vector3 snapToSurface = direction * Mathf.Max(collisionHit.distance - skinWidth, 0);
                 Vector3 leftover = velocity - snapToSurface;
                 float angle = Vector3.Angle(collisionHit.normal, Vector3.up);
 
-                // Handle walkable slopes
                 if (angle <= maxSlope)
                 {
                     if (gravityPass)
                         return snapToSurface;
 
-                    // Project remaining velocity onto the slope plane
                     leftover = Vector3.ProjectOnPlane(leftover, collisionHit.normal);
 
-                    // Ensure we're not increasing speed
                     leftover = Vector3.ClampMagnitude(leftover, originalMagnitude - snapToSurface.magnitude);
                 }
-                else // Handle walls and steep slopes
+                else
                 {
                     if (isGrounded && !gravityPass)
                     {
-                        // Project onto horizontal plane relative to wall
                         leftover = Vector3.ProjectOnPlane(
                             new Vector3(leftover.x, 0, leftover.z),
                             new Vector3(collisionHit.normal.x, 0, collisionHit.normal.z)
@@ -131,11 +125,9 @@ namespace Player
                     }
                     else
                     {
-                        // Project remaining velocity onto the wall plane
                         leftover = Vector3.ProjectOnPlane(leftover, collisionHit.normal);
                     }
 
-                    // Ensure projected velocity doesn't exceed original leftover magnitude
                     leftover = Vector3.ClampMagnitude(leftover, originalMagnitude - snapToSurface.magnitude);
                 }
 
@@ -152,8 +144,29 @@ namespace Player
                     collisionFlags |= CollisionFlags.Sides;
                 }
 
-                // Add the distance we safely moved and recurse with remaining velocity
                 return snapToSurface + Collide(leftover, startPosition + snapToSurface, depth + 1, gravityPass, initialDirection);
+            }
+
+            if (!gravityPass && isGrounded && velocity.y == 0)
+            {
+                RaycastHit groundHit;
+                float groundCheckDistance = radius * 2;
+
+                if (Physics.Raycast(startPosition + Vector3.up * (radius * 0.5f), Vector3.down, out groundHit, groundCheckDistance + skinWidth, ~ignoredLayers))
+                {
+                    float groundAngle = Vector3.Angle(groundHit.normal, Vector3.up);
+
+                    if (groundAngle <= maxSlope)
+                    {
+                        float distanceToGround = groundHit.distance - (radius * 0.5f) - skinWidth;
+
+                        if (distanceToGround > skinWidth && distanceToGround < radius)
+                        {
+                            Vector3 snapVector = Vector3.down * distanceToGround;
+                            return velocity + snapVector;
+                        }
+                    }
+                }
             }
 
             return velocity;
