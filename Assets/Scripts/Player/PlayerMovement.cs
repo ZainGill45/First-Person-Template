@@ -161,7 +161,10 @@ namespace Player
 
             #region Apply Gravity
             if (controller.isGrounded)
+            {
+                ceilingHit = false;
                 yVelocity = 0f;
+            }
 
             if (!controller.isGrounded)
                 yVelocity += gravity * Time.deltaTime;
