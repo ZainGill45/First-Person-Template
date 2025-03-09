@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using UnityEngine.UI;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace KCC.Examples
 {
@@ -38,7 +36,7 @@ namespace KCC.Examples
         private void UpdateOnImages()
         {
             RenderOn.enabled = Camera.cullingMask == -1;
-            SimOn.enabled = Physics.autoSimulation;
+            SimOn.enabled = Physics.simulationMode == SimulationMode.FixedUpdate;
             InterpOn.enabled = KinematicCharacterSystem.Settings.Interpolate;
         }
 
@@ -52,7 +50,7 @@ namespace KCC.Examples
 
         public void ToggleRendering()
         {
-            if(Camera.cullingMask == -1)
+            if (Camera.cullingMask == -1)
             {
                 Camera.cullingMask = UIMask;
             }
@@ -65,7 +63,7 @@ namespace KCC.Examples
 
         public void TogglePhysicsSim()
         {
-            Physics.autoSimulation = !Physics.autoSimulation;
+            Physics.simulationMode = Physics.simulationMode == SimulationMode.FixedUpdate ? SimulationMode.Script : SimulationMode.FixedUpdate;
             UpdateOnImages();
         }
 

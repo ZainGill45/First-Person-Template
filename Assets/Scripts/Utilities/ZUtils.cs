@@ -6,7 +6,7 @@ namespace Utilities
     {
         private const float THRESHOLD = 0.01f;
 
-        public const float DEFAULT_AR = 16 / 9f;
+        public const float DEFAULT_ASPECT_RATIO = 16 / 9f;
         public const float VERY_LARGE_THRESHOLD = 1f;
         public const float LARGE_THRESHOLD = 0.1f;
         public const float SMALL_THRESHOLD = 0.001f;
