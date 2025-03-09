@@ -497,7 +497,7 @@ Camera:
     height: 1
   near clip plane: 0.01
   far clip plane: 1000
-  field of view: 70.5328
+  field of view: 70.55763
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -3033,8 +3033,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseMenu: {fileID: 1707736401}
-  fadeEase: 9
-  fadeDuration: 0.3
 --- !u!114 &1606622372
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3426,9 +3424,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2094119770}
-  - component: {fileID: 2094119777}
-  - component: {fileID: 2094119776}
-  - component: {fileID: 2094119775}
   m_Layer: 0
   m_Name: Controller
   m_TagString: Untagged
@@ -3451,81 +3446,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1402667673}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2094119775
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2094119769}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6cf2eae91283b72438ab779262cb50df, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerCamera: {fileID: 330585545}
-  controller: {fileID: 2094119776}
-  headOffset: 0.25
-  maxVerticalClamp: 90
-  minVerticalClamp: -90
-  defaultFOV: 103
-  sensitivity: 0.2
-  walkSpeed: 7
-  jumpHeight: 1.8
-  acceleration: 10
-  deceleration: 9
-  airAcceleration: 5
-  airDeceleration: 0.2
-  sprintFOV: 106
-  sprintModifier: 2
-  sprintEnterModifier: 2
-  sprintExitModifier: 3
-  defaultLerpModifier: 5
-  camPositionalSmoothing: 64
-  gravity: -30
---- !u!114 &2094119776
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2094119769}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4ab1d3c4e48766c428fedebba64a6870, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxSlope: 55
-  <height>k__BackingField: 2.25
-  <radius>k__BackingField: 0.45
-  ignoredLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  maxRecursionDepth: 5
-  skinWidth: 0.01
---- !u!136 &2094119777
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2094119769}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.45
-  m_Height: 2.25
-  m_Direction: 1
-  m_Center: {x: 0, y: 1.125, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
