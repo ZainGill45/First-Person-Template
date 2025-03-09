@@ -1,5 +1,4 @@
 using UnityEngine;
-using DG.Tweening;
 using System;
 
 namespace Managers
@@ -8,10 +7,6 @@ namespace Managers
     {
         [Header("Dependencies")]
         [SerializeField] private CanvasGroup pauseMenu;
-
-        [Header("General Settings")]
-        [SerializeField] private Ease fadeEase = Ease.OutCubic;
-        [SerializeField] private float fadeDuration = 0.3f;
 
         public static PauseManager instance { get; private set; }
 
@@ -60,8 +55,8 @@ namespace Managers
 
             gamePaused = true;
 
-            DOTween.To(() => Time.timeScale, x => Time.timeScale = x, 0f, fadeDuration).SetEase(fadeEase).SetUpdate(true);
-            pauseMenu.DOFade(1f, fadeDuration).SetEase(fadeEase).SetUpdate(true);
+            Time.timeScale = 0f;
+            pauseMenu.alpha = 1f;
 
             OnGamePaused?.Invoke();
         }
@@ -73,8 +68,8 @@ namespace Managers
 
             gamePaused = false;
 
-            DOTween.To(() => Time.timeScale, x => Time.timeScale = x, 1f, fadeDuration).SetEase(fadeEase).SetUpdate(true);
-            pauseMenu.DOFade(0f, fadeDuration).SetEase(fadeEase).SetUpdate(true);
+            Time.timeScale = 1f;
+            pauseMenu.alpha = 0f;
 
             OnGamePlayed?.Invoke();
         }
