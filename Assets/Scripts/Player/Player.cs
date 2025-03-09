@@ -27,6 +27,17 @@ namespace Player
             };
 
             playerCamera.UpdateRotation(mouseInput);
+
+            CharacterInput characterInput = new()
+            {
+                rotation = playerCamera.transform.rotation,
+                moveX = Input.GetAxisRaw("Horizontal"),
+                moveY = Input.GetAxisRaw("Vertical"),
+                jumpDown = Input.GetKeyDown(KeyCode.Space),
+                sprintHold = Input.GetKey(KeyCode.LeftShift)
+            };
+
+            playerCharacter.UpdateInput(characterInput);
         }
 
         private void LateUpdate()
