@@ -30,7 +30,7 @@ namespace Player
 
             CharacterInput characterInput = new()
             {
-                rotation = playerCamera.transform.rotation,
+                rotation = playerCamera.transform.localEulerAngles,
                 moveX = Input.GetAxisRaw("Horizontal"),
                 moveY = Input.GetAxisRaw("Vertical"),
                 jumpDown = Input.GetKeyDown(KeyCode.Space),

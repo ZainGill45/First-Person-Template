@@ -5,7 +5,7 @@ namespace Player
 {
     public struct CharacterInput
     {
-        public Quaternion rotation;
+        public Vector3 rotation;
 
         public float moveX;
         public float moveY;
@@ -25,7 +25,11 @@ namespace Player
         [field: SerializeField] private float jumpForce = 10f;
         [field: SerializeField] private float gravity = -30f;
 
-        private Quaternion requestedRotation;
+        private Vector3 inputVector;
+        private Vector3 smoothedVector;
+        private Vector3 planerImpulseVector;
+
+        private Vector3 requestedRotation;
         private Vector3 requestedMovement;
 
         private bool requestedJump;
@@ -37,38 +41,43 @@ namespace Player
 
         public void UpdateInput(CharacterInput characterInput)
         {
-            requestedRotation = characterInput.rotation;
-            requestedMovement = new Vector3(characterInput.moveX, 0f, characterInput.moveY);
+            inputVector = (characterMotor.CharacterForward * characterInput.moveY + characterMotor.CharacterRight * characterInput.moveX).normalized;
 
-            requestedMovement = Vector3.ClampMagnitude(requestedMovement, 1f);
+            if (characterMotor.GroundingStatus.IsStableOnGround)
+            {
+                if (inputVector.magnitude > 0f)
+                {
+                    smoothedVector = Vector3.Lerp(smoothedVector, inputVector, Time.deltaTime * 9f);
+                } else
+                {
+                    smoothedVector = Vector3.Lerp(smoothedVector, inputVector, Time.deltaTime * 8f);
+                }
+            } else
+            {
+                if (inputVector.magnitude > 0f)
+                {
+                    smoothedVector = Vector3.Lerp(smoothedVector, inputVector, Time.deltaTime * 5f);
+                }
+                else
+                {
+                    smoothedVector = Vector3.Lerp(smoothedVector, inputVector, Time.deltaTime * 0.1f);
+                }
+            }
 
-            requestedMovement = characterInput.rotation * requestedMovement;
+            requestedMovement = smoothedVector + planerImpulseVector;
 
             requestedJump = requestedJump || characterInput.jumpDown;
         }
 
         public void UpdateRotation(ref Quaternion currentRotation, float deltaTime) 
         {
-            Vector3 forward = Vector3.ProjectOnPlane
-            (
-                requestedRotation * Vector3.forward, 
-                characterMotor.CharacterUp
-            );
-
-            if (forward != Vector3.zero )
-                currentRotation = Quaternion.LookRotation(forward, characterMotor.CharacterUp);
+            currentRotation = Quaternion.Euler(new Vector3(0, requestedRotation.y, 0));
         }
         public void UpdateVelocity(ref Vector3 currentVelocity, float deltaTime) 
         {
             if (characterMotor.GroundingStatus.IsStableOnGround)
             {
-                Vector3 groundedMovement = characterMotor.GetDirectionTangentToSurface
-                (
-                    direction: requestedMovement,
-                    surfaceNormal: characterMotor.GroundingStatus.GroundNormal
-                ) * requestedMovement.magnitude;
-
-                currentVelocity = groundedMovement * defaultSpeed;
+                currentVelocity = requestedMovement * defaultSpeed;
             } else
             {
                 currentVelocity += characterMotor.CharacterUp * gravity * deltaTime;
@@ -79,7 +88,11 @@ namespace Player
                 requestedJump = false;
 
                 characterMotor.ForceUnground();
-                currentVelocity += characterMotor.CharacterUp * jumpForce;
+
+                float currentVerticalSpeed = Vector3.Dot(currentVelocity, characterMotor.CharacterUp);
+                float targetVerticalSpeed = Mathf.Max(currentVerticalSpeed, jumpForce);
+
+                currentVelocity += characterMotor.CharacterUp * (targetVerticalSpeed - currentVerticalSpeed);
             }
         }
         public void AfterCharacterUpdate(float deltaTime) { }
