@@ -1722,7 +1722,7 @@ MonoBehaviour:
   m_Shape:
     rid: 6859988331879727358
   m_ShapeRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_UnmodifiedMeshVersion: 8272
+  m_UnmodifiedMeshVersion: 8349
   m_Size: {x: 3, y: 4, z: 6}
   m_LocalCenter: {x: 0, y: 0, z: 0}
   references:
@@ -1734,7 +1734,7 @@ MonoBehaviour:
         m_StepGenerationType: 0
         m_StepsHeight: 0.5
         m_StepsCount: 10
-        m_HomogeneousSteps: 1
+        m_HomogeneousSteps: 0
         m_Circumference: 0
         m_Sides: 1
         m_InnerRadius: 0
@@ -3139,7 +3139,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 506717424}
-  m_VersionIndex: 8272
+  m_VersionIndex: 8349
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -3700,7 +3700,7 @@ MonoBehaviour:
     m_Bits: 4294967295
   DiscreteCollisionEvents: 0
   StepHandling: 2
-  MaxStepHeight: 0.6
+  MaxStepHeight: 0.55
   AllowSteppingWithoutStableGrounding: 1
   MinRequiredStepDepth: 0.1
   LedgeAndDenivelationHandling: 1

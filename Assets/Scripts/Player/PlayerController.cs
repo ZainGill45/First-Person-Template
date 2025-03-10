@@ -2,7 +2,6 @@ using UnityEngine;
 using Utilities;
 using Managers;
 using KCC;
-using System;
 
 namespace Player
 {
@@ -164,9 +163,9 @@ namespace Player
         public void PostGroundingUpdate(float deltaTime) 
         {
             if (motor.GroundingStatus.IsStableOnGround && !motor.LastGroundingStatus.IsStableOnGround)
-                OnLanded.Invoke();
+                OnLanded?.Invoke();
             else if (!motor.GroundingStatus.IsStableOnGround && motor.LastGroundingStatus.IsStableOnGround)
-                OnLeftGround.Invoke();
+                OnLeftGround?.Invoke();
         }
         public void ProcessHitStabilityReport(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, Vector3 atCharacterPosition, Quaternion atCharacterRotation, ref HitStabilityReport hitStabilityReport) 
         { 
