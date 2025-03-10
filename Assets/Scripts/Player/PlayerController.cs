@@ -1,12 +1,14 @@
 using UnityEngine;
 using Utilities;
-using KCC;
 using Managers;
+using KCC;
+using System;
 
 namespace Player
 {
     public class PlayerController : MonoBehaviour, ICharacterController
     {
+        #region Variables
         [field: Header("Dependencies")]
         [field: SerializeField] private KinematicCharacterMotor motor;
         [field: SerializeField] private Camera cam;
@@ -22,6 +24,11 @@ namespace Player
         [field: SerializeField] private float jumpForce = 10f;
         [field: SerializeField] private float gravity = 30f;
 
+        public delegate void OnLeftGroundDelegate();
+        public event OnLeftGroundDelegate OnLeftGround;
+        public delegate void OnLandedDelegate();
+        public event OnLandedDelegate OnLanded;
+
         private Vector3 inputVector;
         private Vector3 smoothedVector;
         private Vector3 planerImpulseVector;
@@ -36,9 +43,9 @@ namespace Player
         private float currentSpeed;
         private float desiredSpeed;
         private float defaultVerticalFOV;
+        #endregion
 
-        private bool requestedJump;
-
+        #region Initilization
         private void Start()
         {
             defaultVerticalFOV = Camera.HorizontalToVerticalFieldOfView(defaultFOV, ZUtils.DEFAULT_ASPECT_RATIO);
@@ -49,6 +56,16 @@ namespace Player
             currentSpeed = defaultSpeed;
             desiredSpeed = defaultSpeed;
         }
+        private void OnEnable()
+        {
+            OnLanded += OnLandedResponse;
+        }
+        private void OnDisable()
+        {
+
+            OnLanded -= OnLandedResponse;
+        }
+        #endregion
 
         private void Update()
         {
@@ -69,9 +86,19 @@ namespace Player
 
             inputVector = (motor.CharacterForward * Input.GetAxisRaw("Vertical") + motor.CharacterRight * Input.GetAxisRaw("Horizontal")).normalized;
 
-            #region Evaluate Jump
-            requestedJump = requestedJump || Input.GetKeyDown(KeyCode.Space) && motor.GroundingStatus.IsStableOnGround;
-            #endregion
+            if (motor.GroundingStatus.IsStableOnGround)
+            {
+                inputVector = motor.GetDirectionTangentToSurface(inputVector, motor.GroundingStatus.GroundNormal);
+            } else
+            {
+                yVelocity -= gravity * Time.deltaTime;
+            }
+
+            if (Input.GetKeyDown(KeyCode.Space) && motor.GroundingStatus.IsStableOnGround)
+            {
+                motor.ForceUnground();
+                yVelocity += jumpForce;
+            }
 
             #region Smooth Movement
             if (motor.GroundingStatus.IsStableOnGround)
@@ -101,40 +128,57 @@ namespace Player
             movementDirection = smoothedVector + planerImpulseVector;
         }
 
+        #region KCC Callbacks
         public void UpdateRotation(ref Quaternion currentRotation, float deltaTime) 
         {
             currentRotation = Quaternion.Euler(controllerRotation);
         }
         public void UpdateVelocity(ref Vector3 currentVelocity, float deltaTime)
         {
-            if (motor.GroundingStatus.IsStableOnGround)
-                yVelocity = 0f;
-
-            if (requestedJump)
-            {
-                requestedJump = false;
-
-                motor.ForceUnground();
-
-                float currentVerticalSpeed = Vector3.Dot(currentVelocity, motor.CharacterUp);
-                float targetVerticalSpeed = Mathf.Max(currentVerticalSpeed, jumpForce);
-
-                yVelocity += (targetVerticalSpeed - currentVerticalSpeed);
-            }
-
-            if (!motor.GroundingStatus.IsStableOnGround)
-                yVelocity -= gravity * deltaTime;
-
             currentVelocity = (movementDirection * defaultSpeed) + motor.CharacterUp * yVelocity;
         }
-        public void AfterCharacterUpdate(float deltaTime) { }
-        public void BeforeCharacterUpdate(float deltaTime) { }
-        public bool IsColliderValidForCollisions(Collider coll) { return true; }
-        public void OnDiscreteCollisionDetected(Collider hitCollider) { }
-        public void OnGroundHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport) { }
-        public void OnMovementHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport) { }
-        public void PostGroundingUpdate(float deltaTime) { }
-        public void ProcessHitStabilityReport(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, Vector3 atCharacterPosition, Quaternion atCharacterRotation, ref HitStabilityReport hitStabilityReport) { }
+        public void AfterCharacterUpdate(float deltaTime) 
+        { 
         
+        }
+        public void BeforeCharacterUpdate(float deltaTime) 
+        { 
+        
+        }
+        public bool IsColliderValidForCollisions(Collider coll) 
+        { 
+            return true; 
+        }
+        public void OnDiscreteCollisionDetected(Collider hitCollider) 
+        { 
+        
+        }
+        public void OnGroundHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport) 
+        { 
+        
+        }
+        public void OnMovementHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport) 
+        { 
+        
+        }
+        public void PostGroundingUpdate(float deltaTime) 
+        {
+            if (motor.GroundingStatus.IsStableOnGround && !motor.LastGroundingStatus.IsStableOnGround)
+                OnLanded.Invoke();
+            else if (!motor.GroundingStatus.IsStableOnGround && motor.LastGroundingStatus.IsStableOnGround)
+                OnLeftGround.Invoke();
+        }
+        public void ProcessHitStabilityReport(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, Vector3 atCharacterPosition, Quaternion atCharacterRotation, ref HitStabilityReport hitStabilityReport) 
+        { 
+        
+        }
+        #endregion
+
+        #region Event Responses
+        private void OnLandedResponse()
+        {
+            yVelocity = 0f;
+        }
+        #endregion
     }
 }

@@ -3700,7 +3700,7 @@ MonoBehaviour:
     m_Bits: 4294967295
   DiscreteCollisionEvents: 0
   StepHandling: 2
-  MaxStepHeight: 0.5
+  MaxStepHeight: 0.6
   AllowSteppingWithoutStableGrounding: 1
   MinRequiredStepDepth: 0.1
   LedgeAndDenivelationHandling: 1
