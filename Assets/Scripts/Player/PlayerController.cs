@@ -1,6 +1,7 @@
 using UnityEngine;
 using Utilities;
 using KCC;
+using Managers;
 
 namespace Player
 {
@@ -19,7 +20,7 @@ namespace Player
         [field: Header("General Settings")]
         [field: SerializeField] private float defaultSpeed = 8f;
         [field: SerializeField] private float jumpForce = 10f;
-        [field: SerializeField] private float gravity = -30f;
+        [field: SerializeField] private float gravity = 30f;
 
         private Vector3 inputVector;
         private Vector3 smoothedVector;
@@ -30,6 +31,7 @@ namespace Player
 
         private float angleX;
         private float angleY;
+        private float yVelocity;
         private float desiredFOV;
         private float currentSpeed;
         private float desiredSpeed;
@@ -50,6 +52,9 @@ namespace Player
 
         private void Update()
         {
+            if (PauseManager.instance.gamePaused)
+                return;
+
             #region Evaluate Controller Rotation
             angleX += Input.GetAxisRaw("Mouse X") * sensitivity;
             angleY -= Input.GetAxisRaw("Mouse Y") * sensitivity;
@@ -100,15 +105,10 @@ namespace Player
         {
             currentRotation = Quaternion.Euler(controllerRotation);
         }
-        public void UpdateVelocity(ref Vector3 currentVelocity, float deltaTime) 
+        public void UpdateVelocity(ref Vector3 currentVelocity, float deltaTime)
         {
             if (motor.GroundingStatus.IsStableOnGround)
-            {
-                currentVelocity = movementDirection * defaultSpeed;
-            } else
-            {
-                currentVelocity += motor.CharacterUp * gravity * deltaTime;
-            }
+                yVelocity = 0f;
 
             if (requestedJump)
             {
@@ -119,8 +119,13 @@ namespace Player
                 float currentVerticalSpeed = Vector3.Dot(currentVelocity, motor.CharacterUp);
                 float targetVerticalSpeed = Mathf.Max(currentVerticalSpeed, jumpForce);
 
-                currentVelocity += motor.CharacterUp * (targetVerticalSpeed - currentVerticalSpeed);
+                yVelocity += (targetVerticalSpeed - currentVerticalSpeed);
             }
+
+            if (!motor.GroundingStatus.IsStableOnGround)
+                yVelocity -= gravity * deltaTime;
+
+            currentVelocity = (movementDirection * defaultSpeed) + motor.CharacterUp * yVelocity;
         }
         public void AfterCharacterUpdate(float deltaTime) { }
         public void BeforeCharacterUpdate(float deltaTime) { }
