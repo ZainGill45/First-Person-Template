@@ -1,6 +1,6 @@
 using UnityEngine;
-using Utilities;
 using Managers;
+using Utilities;
 using KCC;
 
 namespace Player
