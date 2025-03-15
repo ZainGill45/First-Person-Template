@@ -5351,7 +5351,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e094945268c1a8d42a6e3074110f75f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pauseMenu: {fileID: 1707736401}
+  pauseMenu: {fileID: 1707736396}
 --- !u!114 &1606622372
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5485,7 +5485,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1707736397}
   - component: {fileID: 1707736400}
-  - component: {fileID: 1707736401}
   - component: {fileID: 1707736399}
   - component: {fileID: 1707736398}
   m_Layer: 5
@@ -5494,7 +5493,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1707736397
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5578,18 +5577,6 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
---- !u!225 &1707736401
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1707736396}
-  m_Enabled: 1
-  m_Alpha: 0
-  m_Interactable: 0
-  m_BlocksRaycasts: 0
-  m_IgnoreParentGroups: 0
 --- !u!1 &1742480266
 GameObject:
   m_ObjectHideFlags: 0
@@ -7741,7 +7728,7 @@ MonoBehaviour:
   CapsuleYOffset: 1.125
   CapsulePhysicsMaterial: {fileID: 0}
   GroundDetectionExtraDistance: 0.1
-  MaxStableSlopeAngle: 45
+  MaxStableSlopeAngle: 60
   StableGroundLayers:
     serializedVersion: 2
     m_Bits: 4294967295

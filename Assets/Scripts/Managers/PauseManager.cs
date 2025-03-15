@@ -6,7 +6,7 @@ namespace Managers
     public class PauseManager : MonoBehaviour
     {
         [Header("Dependencies")]
-        [SerializeField] private CanvasGroup pauseMenu;
+        [SerializeField] private GameObject pauseMenu;
 
         public static PauseManager instance { get; private set; }
 
@@ -56,7 +56,7 @@ namespace Managers
             gamePaused = true;
 
             Time.timeScale = 0f;
-            pauseMenu.alpha = 1f;
+            pauseMenu.SetActive(true);
 
             OnGamePaused?.Invoke();
         }
@@ -69,7 +69,7 @@ namespace Managers
             gamePaused = false;
 
             Time.timeScale = 1f;
-            pauseMenu.alpha = 0f;
+            pauseMenu.SetActive(false);
 
             OnGamePlayed?.Invoke();
         }
