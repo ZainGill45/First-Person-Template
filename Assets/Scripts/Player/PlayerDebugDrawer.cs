@@ -6,9 +6,9 @@ namespace Player
     public class PlayerDebugDrawer : MonoBehaviour
     {
         [field: Header("Dependencies")]
-        [field: SerializeField] private Mesh debugMesh;
         [field: SerializeField] private KinematicCharacterMotor motor;
         [field: SerializeField] private Transform playerCam;
+        [field: SerializeField] private Mesh debugMesh;
 
         [field: Header("General Settings")]
         [field: SerializeField] private Color debugColor = Color.red;
