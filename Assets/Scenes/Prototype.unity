@@ -1851,7 +1851,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 1846003333}
+  m_Mesh: {fileID: 736555953}
 --- !u!33 &1264627560
 MeshFilter:
   m_ObjectHideFlags: 10
@@ -7748,7 +7748,7 @@ MonoBehaviour:
   DiscreteCollisionEvents: 0
   StepHandling: 2
   MaxStepHeight: 0.6
-  AllowSteppingWithoutStableGrounding: 1
+  AllowSteppingWithoutStableGrounding: 0
   MinRequiredStepDepth: 0.1
   LedgeAndDenivelationHandling: 1
   MaxStableDistanceFromLedge: 0.5

@@ -52,8 +52,8 @@ namespace Player
             cam.fieldOfView = defaultVerticalFOV;
             motor.CharacterController = this;
             desiredFOV = defaultVerticalFOV;
-            currentSpeed = defaultSpeed;
             desiredSpeed = defaultSpeed;
+            currentSpeed = defaultSpeed;
         }
         private void OnEnable()
         {
@@ -149,8 +149,8 @@ namespace Player
             return true; 
         }
         public void OnDiscreteCollisionDetected(Collider hitCollider) 
-        { 
-        
+        {
+            Debug.Log(hitCollider.name);
         }
         public void OnGroundHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport) 
         { 

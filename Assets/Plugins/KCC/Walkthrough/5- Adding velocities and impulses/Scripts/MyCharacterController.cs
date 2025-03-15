@@ -1,8 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using KCC;
-using System;
 
 namespace KCC.Walkthrough.AddingImpulses
 {
