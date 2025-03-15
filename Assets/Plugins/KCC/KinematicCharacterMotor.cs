@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 namespace KCC
 {
@@ -10,14 +10,12 @@ namespace KCC
         Kinematic,
         SimulatedDynamic
     }
-
     public enum StepHandlingMethod
     {
         None,
         Standard,
         Extra
     }
-
     public enum MovementSweepState
     {
         Initial,
