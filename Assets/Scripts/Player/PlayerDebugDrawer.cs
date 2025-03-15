@@ -12,13 +12,13 @@ namespace Player
 
         [field: Header("General Settings")]
         [field: SerializeField] private Color debugColor = Color.red;
-        [field: SerializeField] private float parameter = 1f;
 
         private void OnDrawGizmos()
         {
             Gizmos.color = debugColor;
 
-            Gizmos.DrawWireMesh(debugMesh, 0, motor.transform.position, motor.transform.rotation, motor.transform.localScale);
+            Gizmos.DrawWireMesh(debugMesh, 0, motor.transform.position + Vector3.up * motor.Capsule.center.y, motor.transform.rotation, new Vector3(1f, 1f * motor.Capsule.height * 0.5f, 1f));
+            Gizmos.DrawRay(playerCam.position, playerCam.forward);
         }
     }
 }

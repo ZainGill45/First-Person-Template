@@ -3400,7 +3400,6 @@ MonoBehaviour:
   motor: {fileID: 2094119772}
   playerCam: {fileID: 330585546}
   debugColor: {r: 1, g: 0, b: 0, a: 1}
-  parameter: 1
 --- !u!1 &1423719830
 GameObject:
   m_ObjectHideFlags: 0
