@@ -102,25 +102,15 @@ namespace Player
             #region Smooth Movement
             if (motor.GroundingStatus.IsStableOnGround)
             {
-                if (inputVector.magnitude > 0f)
-                {
-                    smoothedVector = Vector3.Lerp(smoothedVector, inputVector, Time.deltaTime * 9f);
-                }
-                else
-                {
-                    smoothedVector = Vector3.Lerp(smoothedVector, inputVector, Time.deltaTime * 8f);
-                }
+                smoothedVector = inputVector.magnitude > 0f
+                    ? Vector3.Lerp(smoothedVector, inputVector, Time.deltaTime * 9f)
+                    : Vector3.Lerp(smoothedVector, inputVector, Time.deltaTime * 8f);
             }
             else
             {
-                if (inputVector.magnitude > 0f)
-                {
-                    smoothedVector = Vector3.Lerp(smoothedVector, inputVector, Time.deltaTime * 5f);
-                }
-                else
-                {
-                    smoothedVector = Vector3.Lerp(smoothedVector, inputVector, Time.deltaTime * 0.1f);
-                }
+                smoothedVector = inputVector.magnitude > 0f
+                    ? Vector3.Lerp(smoothedVector, inputVector, Time.deltaTime * 5f)
+                    : Vector3.Lerp(smoothedVector, inputVector, Time.deltaTime * 0.1f);
             }
             #endregion
 
@@ -136,13 +126,11 @@ namespace Player
         {
             currentVelocity = (movementDirection * defaultSpeed) + motor.CharacterUp * yVelocity;
         }
-        public void AfterCharacterUpdate(float deltaTime) 
-        { 
-        
+        public void AfterCharacterUpdate(float deltaTime)
+        {
         }
-        public void BeforeCharacterUpdate(float deltaTime) 
-        { 
-        
+        public void BeforeCharacterUpdate(float deltaTime)
+        {
         }
         public bool IsColliderValidForCollisions(Collider coll) 
         { 
@@ -157,8 +145,9 @@ namespace Player
         
         }
         public void OnMovementHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport) 
-        { 
-        
+        {
+            if (!motor.GroundingStatus.IsStableOnGround && motor.Velocity.y > 0 && hitNormal.y < 0)
+                yVelocity = 0f;
         }
         public void PostGroundingUpdate(float deltaTime) 
         {
