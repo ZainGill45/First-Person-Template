@@ -111,6 +111,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbd938dc18970f942b0b3e2e69f86350, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debugMesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
   motor: {fileID: 3424140668209108121}
   cam: {fileID: 3974476157386661967}
   defaultFOV: 103
@@ -120,6 +121,8 @@ MonoBehaviour:
   defaultSpeed: 7
   jumpForce: 10
   gravity: 30
+  debugColor: {r: 1, g: 0, b: 0, a: 1}
+  headHitOffset: 0.04
 --- !u!1 &6103360904777162655
 GameObject:
   m_ObjectHideFlags: 0
@@ -129,7 +132,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7046995583160689474}
-  - component: {fileID: 4252853673535850554}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -154,22 +156,6 @@ Transform:
   - {fileID: 2978734600167120236}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4252853673535850554
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6103360904777162655}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cdd736521a24f6847a711eefb53be53e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  motor: {fileID: 3424140668209108121}
-  playerCam: {fileID: 2978734600167120236}
-  debugMesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
-  debugColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!1 &8151413598569158556
 GameObject:
   m_ObjectHideFlags: 0
