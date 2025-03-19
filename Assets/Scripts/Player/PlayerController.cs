@@ -26,7 +26,6 @@ namespace Player
 
         [field: Header("Debug Settings")]
         [field: SerializeField] private Color debugColor = Color.red;
-        [field: SerializeField] private float headHitOffset = 0.04f;
 
         public delegate void OnLeftGroundDelegate();
         public event OnLeftGroundDelegate OnLeftGround;
@@ -153,10 +152,11 @@ namespace Player
         }
         public void OnMovementHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport)
         {
-            bool headHit = Physics.SphereCast(transform.position, motor.Capsule.radius - headHitOffset, motor.transform.up * (motor.Capsule.height - (motor.Capsule.radius - headHitOffset)), out RaycastHit hit);
-
-            if (!motor.GroundingStatus.IsStableOnGround && motor.Velocity.y > 0 && hitNormal.y < 0 && headHit)
-                yVelocity = 0f;
+            if (!motor.GroundingStatus.IsStableOnGround && motor.Velocity.y > 0 && hitNormal.y < 0)
+            {
+                if (Physics.SphereCast(transform.position, motor.Capsule.radius, motor.transform.up * (motor.Capsule.height - motor.Capsule.radius), out RaycastHit hit))
+                    yVelocity = 0f;
+            }
         }
         public void PostGroundingUpdate(float deltaTime) 
         {
@@ -176,7 +176,6 @@ namespace Player
 
             Gizmos.DrawWireMesh(debugMesh, 0, motor.transform.position + Vector3.up * motor.Capsule.center.y, motor.transform.rotation, new Vector3(1f, 1f * motor.Capsule.height * 0.5f, 1f));
             Gizmos.DrawRay(cam.transform.position, cam.transform.forward);
-            Gizmos.DrawWireSphere(transform.position + motor.transform.up * (motor.Capsule.height - (motor.Capsule.radius - headHitOffset)), motor.Capsule.radius - headHitOffset);
         }
 
         #region Event Responses
