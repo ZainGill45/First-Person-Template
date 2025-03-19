@@ -32,6 +32,8 @@ namespace Player
         public delegate void OnLandedDelegate();
         public event OnLandedDelegate OnLanded;
 
+        private RaycastHit headHit;
+
         private Vector3 inputVector;
         private Vector3 smoothedVector;
         private Vector3 planerImpulseVector;
@@ -154,7 +156,7 @@ namespace Player
         {
             if (!motor.GroundingStatus.IsStableOnGround && motor.Velocity.y > 0 && hitNormal.y < 0)
             {
-                if (Physics.SphereCast(transform.position, motor.Capsule.radius, motor.transform.up * (motor.Capsule.height - motor.Capsule.radius), out RaycastHit hit))
+                if (Physics.SphereCast(transform.position + transform.up * (motor.Capsule.height - motor.Capsule.radius), motor.Capsule.radius, motor.transform.up, out headHit))
                     yVelocity = 0f;
             }
         }
