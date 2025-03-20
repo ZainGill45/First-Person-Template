@@ -1,5 +1,4 @@
 using UnityEngine;
-using Utilities;
 using Managers;
 using System;
 using KCC;
@@ -230,7 +229,7 @@ namespace Player
         {
         }
         public void OnGroundHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport) 
-        { 
+        {
         }
         public void OnMovementHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport)
         {

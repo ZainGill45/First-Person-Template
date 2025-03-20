@@ -125,7 +125,6 @@ MonoBehaviour:
   <deceleration>k__BackingField: 9
   <airAcceleration>k__BackingField: 5
   <airDeceleration>k__BackingField: 0.1
-  <camPositionalLerpModifier>k__BackingField: 64
   <defaultLerpModifier>k__BackingField: 5
   <gravity>k__BackingField: 30
 --- !u!114 &3690796481378272549
@@ -176,7 +175,7 @@ MonoBehaviour:
   controller: {fileID: 7440734618472244011}
   crouchKey: 306
   crouchFOV: 98
-  crouchHeight: 1.7
+  crouchHeight: 1.45
   crouchMultiplier: 0.7
   crouchEnterModifier: 4
   crouchExitModifier: 3

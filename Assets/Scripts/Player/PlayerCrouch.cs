@@ -11,7 +11,7 @@ namespace Player
         [field: Header("General Settings")]
         [field: SerializeField] private KeyCode crouchKey = KeyCode.LeftControl;
         [field: SerializeField, Range(50f, 150f)] private float crouchFOV = 98f;
-        [field: SerializeField] private float crouchHeight = 1.7f;
+        [field: SerializeField] private float crouchHeight = 1.45f;
         [field: SerializeField] private float crouchMultiplier = 0.7f;
         [field: SerializeField] private float crouchEnterModifier = 4f;
         [field: SerializeField] private float crouchExitModifier = 3f;
@@ -83,13 +83,13 @@ namespace Player
 
             while (controller.collision.Capsule.height != crouchHeight)
             {
-                controller.collision.Capsule.height = Mathf.Lerp(controller.collision.Capsule.height, crouchHeight, Time.deltaTime * crouchEnterModifier);
-                controller.collision.Capsule.center = new Vector3(controller.collision.Capsule.center.x, 
-                                                                  initialControllerYOffset - (initialControllerHeight - controller.collision.Capsule.height) / 2, 
-                                                                  controller.collision.Capsule.center.z);
+                float controllerHeight = Mathf.Lerp(controller.collision.Capsule.height, crouchHeight, Time.deltaTime * crouchEnterModifier);
+                float controllerYOffset = initialControllerYOffset - (initialControllerHeight - controllerHeight) * 0.5f;
+
+                controller.collision.SetCapsuleDimensions(controller.collision.Capsule.radius, controllerHeight, controllerYOffset);
 
                 if (Mathf.Approximately(controller.collision.Capsule.height, crouchHeight))
-                    controller.collision.Capsule.height = crouchHeight;
+                    controller.collision.SetCapsuleDimensions(controller.collision.Capsule.radius, crouchHeight, crouchHeight * 0.5f);
 
                 yield return null;
             }
@@ -98,7 +98,7 @@ namespace Player
         {
             while (controller.collision.Capsule.height != initialControllerHeight)
             {
-                if (!Physics.CapsuleCast(controller.transform.position, controller.transform.position + controller.transform.up * initialControllerHeight, controller.collision.Capsule.radius, controller.transform.up))
+                if (!Physics.Raycast(transform.position + transform.up * controller.collision.Capsule.height, transform.up, 0.05f))
                 {
                     controller.SetDesiredSpeedActive(CROUCH_SPEED_LAYER, false);
                     controller.SetDesiredFOVActive(CROUCH_FOV_LAYER, false);
@@ -106,16 +106,18 @@ namespace Player
                     controller.speedLerpModifier = crouchExitModifier;
                     controller.fovLerpModifier = crouchExitModifier;
 
-                    controller.collision.Capsule.height = Mathf.Lerp(controller.collision.Capsule.height, initialControllerHeight, Time.deltaTime * crouchExitModifier);
-                    controller.collision.Capsule.center = new Vector3(controller.collision.Capsule.center.x, 
-                                                                      initialControllerYOffset - (initialControllerHeight - controller.collision.Capsule.height) / 2, 
-                                                                      controller.collision.Capsule.center.z);
+                    float controllerHeight = Mathf.Lerp(controller.collision.Capsule.height, initialControllerHeight, Time.deltaTime * crouchExitModifier);
+                    float controllerYOffset = initialControllerYOffset - (initialControllerHeight - controllerHeight) * 0.5f;
+
+                    controller.collision.SetCapsuleDimensions(controller.collision.Capsule.radius, controllerHeight, controllerYOffset);
 
                     if (Mathf.Approximately(controller.collision.Capsule.height, initialControllerHeight))
-                        controller.collision.Capsule.height = initialControllerHeight;
+                        controller.collision.SetCapsuleDimensions(controller.collision.Capsule.radius, initialControllerHeight, initialControllerYOffset);
                 }
                 else
                 {
+                    Debug.DrawRay(transform.position + transform.up * controller.collision.Capsule.height, transform.up * 0.05f, Color.red);
+
                     controller.SetDesiredSpeedActive(CROUCH_SPEED_LAYER, true);
                     controller.SetDesiredFOVActive(CROUCH_FOV_LAYER, true);
 
