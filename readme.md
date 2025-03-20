@@ -1,61 +1,73 @@
 # Unity First Person Project Template
 
 ## Overview
-This is a first-person player controller template for Unity, designed for smooth movement, camera handling, and input management. It includes features such as jumping, sprinting, and pausing the game. The template is structured to be modular and easily extendable.
+
+This is a first-person player controller template for Unity, utilizing the Kinematic Character Controller (KCC) for robust and smooth movement. It includes features such as jumping, sprinting, crouching, camera handling, and input management. The template is designed to be modular and easily extendable, leveraging layered speed and FOV management for flexible gameplay mechanics.
 
 ## Features
-- **Player Input System**: Handles movement, mouse look, jumping, sprinting, and pausing.
-- **Character Controller Movement**: Implements acceleration, deceleration, and air control for smooth gameplay.
-- **Camera Handling**: Implements first-person camera movement with clamping and smooth transitions.
-- **Pause Management**: Ensures input handling stops when the game is paused.
-- **Jump Mechanics**: Implements a physics-based jump system with configurable jump height.
+
+* **Kinematic Character Controller (KCC):** Provides reliable and smooth character movement.
+* **Player Input System:** Handles movement, mouse look, jumping, sprinting, crouching, and pausing.
+* **Camera Handling:** Implements first-person camera movement with clamping, smooth transitions, and FOV adjustments.
+* **Pause Management:** Ensures input handling stops when the game is paused.
+* **Jump Mechanics:** Implements a physics-based jump system with configurable jump height.
+* **Sprint and Crouch Mechanics:** Includes layered speed and FOV adjustments for smooth transitions.
+* **Layered Speed and FOV Management:** Allows for dynamic adjustments to player speed and camera FOV through a layered system.
+* **Utility Functions (ZUtils):** Provides useful extension methods and constants.
 
 ## Installation
-1. Clone the repository: `git clone <repository-url>`
-2. At the repository root run the `git lfs install` command to initilize git lfs hooks
-3. Open the project in Unity (version 6000.0.36f1 or later recommended)
-4. Ensure all required layers and input settings are correctly set up in Unity
+
+1.  Clone the repository: `git clone <repository-url>`
+2.  At the repository root, run the `git lfs install` command to initialize Git LFS hooks.
+3.  Open the project in Unity (Unity 2021 or later recommended, specifically tested with a version similar to 2021 or later due to KCC usage).
+4.  Ensure the Kinematic Character Controller (KCC) package is installed. This package is essential for the character controller to function.
+5.  Ensure all required layers and input settings are correctly set up in Unity.
 
 ## Usage
+
 ### Player Input
-- **Move:** `WASD` or Arrow Keys
-- **Jump:** `Space`
-- **Sprint:** `Left Shift`
-- **Pause:** `Escape`
+
+* **Move:** WASD or Arrow Keys
+* **Jump:** Space
+* **Sprint:** Left Shift
+* **Crouch:** Left Control
+* **Pause:** Escape
 
 ### Player Movement
-- Uses Unity's `CharacterController` for smooth movement.
-- Supports grounded and air movement.
-- Includes an impulse system for external force application.
+
+* Uses the Kinematic Character Controller (KCC) for precise and smooth movement.
+* Supports grounded and air movement with configurable acceleration and deceleration.
+* Includes an impulse system for applying external forces.
 
 ### Player Camera
-- Mouse-controlled camera rotation.
-- Clamped vertical angles to prevent unnatural rotations.
-- Field of view (FOV) settings included.
 
-## Code Structure
+* Mouse-controlled camera rotation with clamped vertical angles.
+* Configurable field of view (FOV) settings and dynamic FOV adjustments.
 
-### `PlayerInput.cs`
-Manages user input, including movement, camera rotation, and action keys.
+### Code Structure
 
-### `PlayerMovement.cs`
-Handles character movement, acceleration, deceleration, and air physics.
+* **PlayerController.cs:** Manages character movement, camera rotation, and layered speed and FOV adjustments using KCC.
+* **PlayerJump.cs:** Implements jump mechanics.
+* **PlayerSprint.cs:** Implements sprint mechanics with layered speed and FOV adjustments.
+* **PlayerCrouch.cs:** Implements crouch mechanics with layered speed and FOV adjustments and capsule collider resizing.
+* **PlayerMeshUpdater.cs:** Updates the player mesh to match the KCC capsule collider.
+* **InputManager.cs:** Manages user input, including movement, camera rotation, and action keys.
+* **PauseManager.cs:** Manages game pause state.
+* **ZUtils.cs:** Provides utility functions for movement smoothing and other general-purpose operations.
 
-### `PlayerCamera.cs`
-Manages first-person camera rotation, smoothing, and field of view.
+### Dependencies
 
-### `PlayerJump.cs`
-Implements jumping mechanics, calculating jump force based on gravity.
+* **Kinematic Character Controller (KCC):** For robust character movement.
+* **PauseManager:** For pausing mechanics.
+* **ZUtils:** Utility functions.
 
-## Dependencies
-- **UnityEngine.CharacterController**: For movement handling.
-- **PauseManager**: Used for pausing mechanics (ensure it's implemented in your project).
-- **ZUtils**: Utility functions for movement smoothing (ensure it's included in your project).
+### Future Improvements
 
-## Future Improvements
-- Implement crouching mechanics.
-- Add footstep sounds.
-- Add customizable key bindings through Unity's new Input System.
+* Add footstep sounds.
+* Add customizable key bindings through Unity's Input System.
+* Add more player states.
+* Add more complex movement options such as wall running.
 
-## License
+### License
+
 This project is open-source and available under the MIT License.
