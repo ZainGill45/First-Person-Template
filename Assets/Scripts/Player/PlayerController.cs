@@ -36,7 +36,6 @@ namespace Player
         [field: SerializeField] public float airDeceleration { get; private set; } = 0.1f;
 
         [field: Header("Miscellaneous Settings")]
-        [field: SerializeField] public float camPositionalLerpModifier { get; private set; } = 64f;
         [field: SerializeField] public float defaultLerpModifier { get; private set; } = 5f;
         [field: SerializeField] public float gravity { get; private set; } = 30f;
 
@@ -122,45 +121,90 @@ namespace Player
 
         private void Update()
         {
-            if (PauseManager.instance.gamePaused)
+            if (PauseManager.instance.gamePaused) 
                 return;
 
-            #region Evaluate Controller Rotation
+            #region Reset Planer Impulse Vector
+            planerImpulseVector = collision.GroundingStatus.IsStableOnGround
+                ? inputVector.magnitude > 0f
+                    ? Vector3.MoveTowards(planerImpulseVector, Vector3.zero, Time.deltaTime * collision.Velocity.magnitude * GROUNDED_RECOVERY_MOD + 0.01f)
+                    : Vector3.MoveTowards(planerImpulseVector, Vector3.zero, Time.deltaTime * collision.Velocity.magnitude * GROUNDED_RECOVERY_MOD * 0.5f + 0.01f)
+                : inputVector.magnitude > 0f
+                    ? Vector3.MoveTowards(planerImpulseVector, Vector3.zero, Time.deltaTime * collision.Velocity.magnitude * AIR_RECOVERY_MOD + 0.01f)
+                    : Vector3.MoveTowards(planerImpulseVector, Vector3.zero, Time.deltaTime * collision.Velocity.magnitude * AIR_RECOVERY_MOD * 0.5f + 0.01f);
+            #endregion
+
+            #region Rotate Controller
             angleX += Input.GetAxisRaw("Mouse X") * sensitivity;
             angleY -= Input.GetAxisRaw("Mouse Y") * sensitivity;
-
             angleY = Mathf.Clamp(angleY, minVerticalClamp, maxVerticalClamp);
 
-            playerCamera.transform.eulerAngles = new Vector3(angleY, angleX, 0);
-            playerCamera.transform.position = collision.transform.position + collision.CharacterUp * (collision.Capsule.height - 0.26f);
+            transform.localEulerAngles = new Vector3(0, angleX, 0);
+            playerCamera.transform.localEulerAngles = new Vector3(angleY, angleX, 0);
+            playerCamera.transform.position = transform.position + Vector3.up * (collision.Capsule.height - 0.25f);
             #endregion
 
-            inputVector = (collision.CharacterForward * Input.GetAxisRaw("Vertical") + collision.CharacterRight * Input.GetAxisRaw("Horizontal")).normalized;
+            inputVector = (transform.forward * Input.GetAxisRaw("Vertical") + transform.right * Input.GetAxisRaw("Horizontal")).normalized;
 
             #region Apply Gravity
-            if (collision.GroundingStatus.IsStableOnGround)
-            {
-                inputVector = collision.GetDirectionTangentToSurface(inputVector, collision.GroundingStatus.GroundNormal);
-            } else
-            {
+            if (!collision.GroundingStatus.IsStableOnGround)
                 yVelocity -= gravity * Time.deltaTime;
-            }
             #endregion
 
-            #region Smooth Movement
-            if (collision.GroundingStatus.IsStableOnGround)
-            {
-                smoothedVector = inputVector.magnitude > 0f
-                    ? Vector3.Lerp(smoothedVector, inputVector, Time.deltaTime * 9f)
-                    : Vector3.Lerp(smoothedVector, inputVector, Time.deltaTime * 8f);
-            }
-            else
-            {
-                smoothedVector = inputVector.magnitude > 0f
-                    ? Vector3.Lerp(smoothedVector, inputVector, Time.deltaTime * 5f)
-                    : Vector3.Lerp(smoothedVector, inputVector, Time.deltaTime * 0.1f);
-            }
+            #region Smooth Movement Vector
+            smoothedVector = collision.GroundingStatus.IsStableOnGround
+                ? inputVector.magnitude > 0f
+                    ? Vector3.Lerp(smoothedVector, inputVector, Time.deltaTime * acceleration)
+                    : Vector3.Lerp(smoothedVector, inputVector, Time.deltaTime * deceleration)
+                : inputVector.magnitude > 0f
+                    ? Vector3.Lerp(smoothedVector, inputVector, Time.deltaTime * airAcceleration)
+                    : Vector3.Lerp(smoothedVector, inputVector, Time.deltaTime * airDeceleration);
             #endregion
+
+            #region Interpolate Parameters
+            impulseFOV = Mathf.Lerp(impulseFOV, 0f, Time.deltaTime * impulseFOVLerpModifier);
+            playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, ComputeDesiredFOV() + impulseFOV, Time.deltaTime * fovLerpModifier);
+
+            currentSpeed = Mathf.Lerp(currentSpeed, ComputeDesiredSpeed(), Time.deltaTime * speedLerpModifier);
+            #endregion
+        }
+
+        private float ComputeDesiredSpeed()
+        {
+            float computed = defaultSpeed;
+
+            int maxLayer = int.MinValue;
+
+            for (int i = 0; i < desiredSpeedRegistry.Length; i++)
+            {
+                LayeredParameter param = desiredSpeedRegistry[i];
+
+                if (param.active && i > maxLayer)
+                {
+                    maxLayer = i;
+                    computed = param.parameterValue;
+                }
+            }
+
+            return computed;
+        }
+        private float ComputeDesiredFOV()
+        {
+            float computed = defaultVerticalFOV;
+
+            int maxLayer = int.MinValue;
+
+            for (int i = 0; i < desiredFOVRegistry.Length; i++)
+            {
+                LayeredParameter param = desiredFOVRegistry[i];
+                if (param.active && i > maxLayer)
+                {
+                    maxLayer = i;
+                    computed = param.parameterValue;
+                }
+            }
+
+            return computed;
         }
 
         #region KCC Callbacks
@@ -170,7 +214,7 @@ namespace Player
         }
         public void UpdateVelocity(ref Vector3 currentVelocity, float deltaTime)
         {
-            currentVelocity = smoothedVector * defaultSpeed + planerImpulseVector + collision.CharacterUp * yVelocity;
+            currentVelocity = smoothedVector * currentSpeed + planerImpulseVector + collision.CharacterUp * yVelocity;
         }
         public void AfterCharacterUpdate(float deltaTime)
         {

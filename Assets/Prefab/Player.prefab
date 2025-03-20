@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 3424140668209108121}
   - component: {fileID: 7440734618472244011}
   - component: {fileID: 3690796481378272549}
+  - component: {fileID: 1345974956907148307}
+  - component: {fileID: 5962862069306629443}
   m_Layer: 0
   m_Name: Controller
   m_TagString: Player
@@ -141,6 +143,43 @@ MonoBehaviour:
   controller: {fileID: 7440734618472244011}
   jumpKey: 32
   jumpHeight: 1.5
+--- !u!114 &1345974956907148307
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1300821592736547688}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b65771f0fa4fa604195d1a381a668523, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controller: {fileID: 7440734618472244011}
+  sprintKey: 304
+  sprintFOV: 108
+  sprintMultiplier: 2
+  sprintEnterModifier: 4
+  sprintExitModifier: 2
+--- !u!114 &5962862069306629443
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1300821592736547688}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e34c2e550c757774d8e112eb8c61b158, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controller: {fileID: 7440734618472244011}
+  crouchKey: 306
+  crouchFOV: 98
+  crouchHeight: 1.7
+  crouchMultiplier: 0.7
+  crouchEnterModifier: 4
+  crouchExitModifier: 3
 --- !u!1 &3044235585261951068
 GameObject:
   m_ObjectHideFlags: 0
@@ -168,7 +207,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3044235585261951068}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 1.125, z: 0}
   m_LocalScale: {x: 1, y: 1.125, z: 1}
   m_ConstrainProportionsScale: 0
