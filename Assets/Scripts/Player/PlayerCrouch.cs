@@ -48,6 +48,9 @@ namespace Player
 
         private void Update()
         {
+            if (!controller.collision.GroundingStatus.IsStableOnGround)
+                return;
+
             if (Input.GetKey(crouchKey))
             {
                 if (crouching) return;
