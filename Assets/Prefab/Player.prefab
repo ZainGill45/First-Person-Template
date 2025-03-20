@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 9089537113039485559}
   - component: {fileID: 3424140668209108121}
   - component: {fileID: 7440734618472244011}
+  - component: {fileID: 3690796481378272549}
   m_Layer: 0
   m_Name: Controller
   m_TagString: Player
@@ -111,15 +112,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbd938dc18970f942b0b3e2e69f86350, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  motor: {fileID: 3424140668209108121}
-  cam: {fileID: 3974476157386661967}
-  defaultFOV: 103
-  sensitivity: 0.2
-  minVerticalClamp: -90
-  maxVerticalClamp: 90
-  defaultSpeed: 7
-  jumpForce: 10
-  gravity: 30
+  <collision>k__BackingField: {fileID: 3424140668209108121}
+  <playerCamera>k__BackingField: {fileID: 3974476157386661967}
+  <minVerticalClamp>k__BackingField: -90
+  <maxVerticalClamp>k__BackingField: 90
+  <defaultFOV>k__BackingField: 103
+  <sensitivity>k__BackingField: 0.2
+  <defaultSpeed>k__BackingField: 7
+  <acceleration>k__BackingField: 9
+  <deceleration>k__BackingField: 9
+  <airAcceleration>k__BackingField: 5
+  <airDeceleration>k__BackingField: 0.1
+  <camPositionalLerpModifier>k__BackingField: 64
+  <defaultLerpModifier>k__BackingField: 5
+  <gravity>k__BackingField: 30
+--- !u!114 &3690796481378272549
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1300821592736547688}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4dbef87d1a9c30d4794cf0fd59d16f16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controller: {fileID: 7440734618472244011}
+  jumpKey: 32
+  jumpHeight: 1.5
 --- !u!1 &3044235585261951068
 GameObject:
   m_ObjectHideFlags: 0
