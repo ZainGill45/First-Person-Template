@@ -9,7 +9,6 @@ namespace Player
     {
         #region Variables
         [field: Header("Dependencies")]
-        [field: SerializeField] private Mesh debugMesh;
         [field: SerializeField] private KinematicCharacterMotor motor;
         [field: SerializeField] private Camera cam;
 
@@ -23,9 +22,6 @@ namespace Player
         [field: SerializeField] private float defaultSpeed = 8f;
         [field: SerializeField] private float jumpForce = 10f;
         [field: SerializeField] private float gravity = 30f;
-
-        [field: Header("Debug Settings")]
-        [field: SerializeField] private Color debugColor = Color.red;
 
         public delegate void OnLeftGroundDelegate();
         public event OnLeftGroundDelegate OnLeftGround;
@@ -171,14 +167,6 @@ namespace Player
         { 
         }
         #endregion
-
-        private void OnDrawGizmos()
-        {
-            Gizmos.color = debugColor;
-
-            Gizmos.DrawWireMesh(debugMesh, 0, motor.transform.position + Vector3.up * motor.Capsule.center.y, motor.transform.rotation, new Vector3(1f, 1f * motor.Capsule.height * 0.5f, 1f));
-            Gizmos.DrawRay(cam.transform.position, cam.transform.forward);
-        }
 
         #region Event Responses
         private void OnLandedResponse()
